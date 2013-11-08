@@ -1,0 +1,6 @@
+vendor
+node_modules
+
+# Web
+web/build
+web/vendor

@@ -1,0 +1,16 @@
+{
+    "name": "mkrause-site",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "jquery": "2.0.x",
+        "requirejs": "2.1.x",
+        "underscore": "1.5.x",
+        "q": "0.9.x",
+        "bootstrap": "3.0.x",
+        "angular": "1.2.x",
+        "angular-route": "1.2.x",
+        "angular-animate": "1.2.x",
+        "restangular": "1.1.x"
+    }
+}

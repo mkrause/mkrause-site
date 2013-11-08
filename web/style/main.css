@@ -1,0 +1,17 @@
+@import url("../vendor/bootstrap/dist/css/bootstrap.css");
+@import url("../vendor/bootstrap/dist/css/bootstrap-theme.css");
+
+/* Define .ng-cloak early, before Angular loads, to avoid flickering */
+.ng-cloak { display: none; }
+
+/* http://www.yearofmoo.com/2013/08/remastered-animation-in-angularjs-1-2.html#how-to-make-animations-in-angularjs%20angular-animate */
+.ng-enter, .ng-leave {
+    transition: 150ms linear all;
+}
+
+/* Ease in on enter */
+.ease-in.ng-enter { opacity: 0; }
+.ease-in.ng-enter-active { opacity: 1; }
+.ease-in.ng-leave {
+    display: none; /* Immediately hide on leaving, to avoid showing two elements at once */
+}
