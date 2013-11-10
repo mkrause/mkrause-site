@@ -5,7 +5,11 @@
     <title ng-bind="page.titleWithPrefix('mkrause', ' - ')">mkrause</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% if env == 'production' -%}
+    <link rel="stylesheet" href="build/main.css">
+{% else %}
     <link rel="stylesheet" href="style/main.css">
+{% endif %}
 </head>
 <body>
     <div class="container">
@@ -31,11 +35,13 @@
     <script src="vendor/requirejs/require.js"></script>
     <script src="scripts/require_config.js"></script>
     <script>
+{% if env == 'production' -%}
     require.config({
         paths: {
-            //main: '../build/main'
+            main: '../build/main'
         }
     });
+{% endif -%}
     require(['main']);
     </script>
 </body>

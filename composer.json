@@ -1,0 +1,16 @@
+{
+    "name": "mkrause/mkrause-site",
+    "authors": [
+        {
+            "name": "mkrause",
+            "email": "maikelkrause@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "~2.3",
+        "symfony/http-kernel": "~2.3",
+        "silex/silex": "~1.1",
+        "twig/twig": ">=1.8,<2.0-dev",
+        "predis/predis": "~0.8"
+    }
+}
