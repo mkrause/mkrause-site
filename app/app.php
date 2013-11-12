@@ -14,12 +14,13 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     ),
 ));
 
-$app->get('/', function() use ($app) {
+$app->get('{path}', function() use ($app) {
     return $app['twig']->render('home.twig', array(
         'env' => 'development'
     ));
-});
+})->assert('path', '.+');
 
+/*
 // Generic REST API
 
 try {
@@ -62,10 +63,12 @@ $app->get('/api/{coll}/{id}', function($coll, $id) use ($app, $db) {
 });
 
 // Update
-$app->put('/api/{coll}/{id}', function($coll, $id) use ($app, $db) {
-    $instance = //...
+$app->put('/api/{coll}/{id}', function(Request $request, $coll, $id) use ($app, $db) {
+    $instance = json_decode($request->getContent(), true);
     $instance['_id'] = $id;
+    var_dump($instance);exit;
     $db->$coll->save($instance);
+    return true;
 });
 
 // Delete
@@ -73,5 +76,6 @@ $app->delete('/api/{coll}/{id}', function($coll, $id) use ($app, $db) {
     $db->$coll->remove(array('_id' => new MongoId($id)));
     return true;
 });
+*/
 
 $app->run();

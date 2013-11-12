@@ -10,6 +10,8 @@ require.config({
         'angular-route': '../vendor/angular-route/angular-route',
         'angular-animate': '../vendor/angular-animate/angular-animate',
         'restangular': '../vendor/restangular/dist/restangular.min',
+        'angular-ui-router': '../vendor/angular-ui-router/release/angular-ui-router.min',
+        'markdown': '../vendor/markdown/src/markdown'
     },
     
     // Shims for libraries that don't define require.js modules of themselves
@@ -18,6 +20,7 @@ require.config({
         // Important: specify dependencies so we don't load dependencies in the wrong order
         'angular-route': { deps: ['angular'] },
         'angular-animate': { deps: ['angular'] },
-        'restangular': { deps: ['angular', 'underscore'] }
+        'restangular': { deps: ['angular', 'underscore'] },
+        'angular-ui-router': { deps: ['angular'] }
     }
 });

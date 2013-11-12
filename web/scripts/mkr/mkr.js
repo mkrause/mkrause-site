@@ -1,24 +1,34 @@
 define([
         'angular',
-        'angular-route',
+        'angular-ui-router',
         'restangular'
     ],
-    function(angular, ngRoute, restangular) {
-        return angular.module('mfs', [
-                'ngRoute',
+    function(angular, uiRouter, restangular) {
+        return angular.module('main', [
+                'ui.router',
                 'restangular'
             ])
             .config(function(RestangularProvider) {
                 RestangularProvider.setBaseUrl('app.php/api');
             })
-            .config(function($routeProvider) {
-                $routeProvider
-                    .when('/', {
-                        controller: 'crud',
-                        templateUrl: 'templates/crud.html'
+            .config(function($stateProvider, $urlRouterProvider) {
+                $urlRouterProvider.otherwise("/");
+                
+                $stateProvider
+                    .state('mkr', {
+                        templateUrl: "templates/mkr.html"
+                    })
+                    .state('mkr.index', {
+                        url: "/",
+                        template: "home"
+                    })
+                    .state('mkr.crud', {
+                        url: "/crud",
+                        controller: "crud",
+                        templateUrl: "templates/mkr/crud.html"
                     });
             })
-            .controller('crud',
+            .controller('mkr.crud',
                 function($scope, Restangular) {
                     $scope.users = null;
                     Restangular.all('users').getList()
@@ -62,8 +72,6 @@ define([
                             });
                     };
                 }
-            )
-            .run(function($rootScope) {
-            });
+            );
     }
 );
