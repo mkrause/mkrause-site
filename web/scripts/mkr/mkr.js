@@ -12,15 +12,13 @@ define([
                 RestangularProvider.setBaseUrl('app.php/api');
             })
             .config(function($stateProvider, $urlRouterProvider) {
-                $urlRouterProvider.otherwise("/");
-                
                 $stateProvider
                     .state('mkr', {
                         templateUrl: "templates/mkr.html"
                     })
                     .state('mkr.index', {
-                        url: "/",
-                        template: "home"
+                        url: "/home",
+                        templateUrl: "templates/mkr/home.html"
                     })
                     .state('mkr.crud', {
                         url: "/crud",

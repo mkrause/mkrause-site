@@ -14,11 +14,13 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     ),
 ));
 
-$app->get('{path}', function() use ($app) {
-    return $app['twig']->render('home.twig', array(
-        'env' => 'development'
-    ));
-})->assert('path', '.+');
+$params = array(
+    'env' => 'development'
+);
+
+$app->get('/{path}', function() use ($app, $params) {
+    return $app['twig']->render('home.twig', $params);
+})->assert('path', '.*');
 
 /*
 // Generic REST API
