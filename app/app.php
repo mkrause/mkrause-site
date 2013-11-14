@@ -18,6 +18,16 @@ $params = array(
     'env' => 'development'
 );
 
+$app->get('/api/blog/{id}', function($id) use ($app, $params) {
+    return <<<EOT
+<h2>Blog post - $id</h2>
+<p>
+    ...
+</p>
+EOT;
+});
+
+// Fallback route
 $app->get('/{path}', function() use ($app, $params) {
     return $app['twig']->render('home.twig', $params);
 })->assert('path', '.*');

@@ -40,13 +40,8 @@ define([
                 console.log('404');
             })
             .run(function($rootScope, $state) {
-                $rootScope.$on('$stateChangeStart', function() {
-                    console.log('stateChangeStart');
-                });
-                
                 $rootScope.layout = {
-                    update: function(key, value) { this[key] = value; },
-                    style: ""
+                    update: function(key, value) { this[key] = value; }
                 };
             });
     }
