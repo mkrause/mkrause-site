@@ -1,7 +1,7 @@
 <h2>List</h2>
 <ul>
     <li ng-repeat="user in users track by user.id">
-        <span style="background: {{ user.name == $parent.user.name ? 'yellow' : 'default' }}">
+        <span style="background: {{ user.name == $parent.user.name ? '#888' : 'default' }}">
             {{ user.id }} - {{ user.name }}
         </span>
     </li>

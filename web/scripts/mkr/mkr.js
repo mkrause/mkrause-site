@@ -20,9 +20,13 @@ define([
                         url: "/home",
                         templateUrl: "templates/mkr/home.html"
                     })
+                    .state('mkr.about', {
+                        url: "/about",
+                        templateUrl: "templates/mkr/about.html"
+                    })
                     .state('mkr.crud', {
                         url: "/crud",
-                        controller: "crud",
+                        controller: "mkr.crud",
                         templateUrl: "templates/mkr/crud.html"
                     });
             })
@@ -30,7 +34,7 @@ define([
                 function($scope, Restangular) {
                     $scope.users = null;
                     Restangular.all('users').getList()
-                        .then(function(users) { $scope.users = users; });
+                        .then(function(users) { console.log(users);$scope.users = users; });
                     
                     $scope.newUser = {};
                     $scope.create = function() {
