@@ -1,11 +1,18 @@
 <?php
 
-$path = __DIR__ . parse_url($_SERVER['REQUEST_URI'])['path'];
+$root = __DIR__;
+$path = $root . parse_url($_SERVER['REQUEST_URI'])['path'];
 
 $out = fopen('php://stdout', 'w');
 fputs($out, $path . "\n");
 
 if (file_exists($path) && !is_dir($path)) {
+    // Security check: only allow paths within the root directory
+    $path_resolved = realpath($path);
+    if (substr($path_resolved, 0, strlen($root)) !== $root) {
+        return false;
+    }
+    
     $mime_types = array(
         'txt' => 'text/plain',
         'html' => 'text/html',
