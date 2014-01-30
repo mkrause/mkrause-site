@@ -1,9 +1,10 @@
 Vagrant.configure("2") do |config|
-    # https://dl.dropboxusercontent.com/s/xymcvez85i29lym/vagrant-debian-wheezy64.box
     config.vm.box = "wheezy64"
+    config.vm.box_url = "https://dl.dropboxusercontent.com/s/xymcvez85i29lym/vagrant-debian-wheezy64.box"
     
-    config.vm.network :forwarded_port, host: 8002, guest: 80
+    # Assign a static IP address to the guest machine
     config.vm.network "private_network", ip: "192.168.56.101"
+    #config.vm.network :forwarded_port, host: 8002, guest: 80
     
     config.vm.synced_folder "./", "/var/www", id: "vagrant-root", :nfs => false
     
