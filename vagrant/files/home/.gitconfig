@@ -1,0 +1,17 @@
+# locations:
+# /etc/gitconfig [git config --system] (system-specific)
+# ~/.gitconfig [git config --global] (user-specific)
+# .git/config [git config] (project-specific)
+
+[user]
+    name = mkrause
+    email = maikelkrause@gmail.com
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+[core]
+    excludesfile = ~/.gitignore
+[color]
+    ui = auto

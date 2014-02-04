@@ -6,6 +6,12 @@ echo "Running  setup.sh..."
 
 set -x # Print the commands being executed
 
+# Add wheezy-backports (for nodejs, and possibly php5-mongo)
+src="deb http://ftp.us.debian.org/debian wheezy-backports main"
+if ! grep "$src" /etc/apt/sources.list; then
+    echo "$src" >> /etc/apt/sources.list
+fi
+
 apt-get update
 apt-get install -q -y debconf-utils
 
@@ -40,11 +46,6 @@ sudo mv /usr/local/bin/composer.phar /usr/local/bin/composer # Rename to `compos
 
 # Node.js
 # Installation on Wheezy: https://github.com/joyent/node/wiki/backports.debian.org
-new_source="deb http://ftp.us.debian.org/debian wheezy-backports main"
-if ! grep "$new_source" /etc/apt/sources.list; then
-    echo "$new_source" >> /etc/apt/sources.list
-    apt-get update
-fi
 apt-get install -q -y nodejs-legacy
 
 # NPM
@@ -60,3 +61,10 @@ ln -fs /vagrant /var/www
 shopt -s dotglob # Enable globbing dot files
 cp /vagrant/vagrant/files/home/* /root
 cp /vagrant/vagrant/files/home/* /home/vagrant
+
+# Configuration files
+cp /vagrant/vagrant/files/php.ini /etc/php5/cli/conf.d/custom.ini
+cp /vagrant/vagrant/files/httpd.conf /etc/apache2/sites-available/default
+
+# Restart apache
+/etc/init.d/apache2 restart
