@@ -26,11 +26,11 @@ apt-get install -q -y mysql-server mysql-client
 mysqladmin -u root password root
 
 # phpMyAdmin
-# sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/dbconfig-install boolean true'
-# sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/app-password-confirm password pma'
-# sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-pass password pma'
-# sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/app-pass password pma'
-# sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2'﻿
+# debconf-set-selections <<< 'phpmyadmin phpmyadmin/dbconfig-install boolean true'
+# debconf-set-selections <<< 'phpmyadmin phpmyadmin/app-password-confirm password pma'
+# debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-pass password pma'
+# debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/app-pass password pma'
+# debconf-set-selections <<< 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2'﻿
 # apt-get install -q -y phpmyadmin
 
 # Enable mod_rewrite
@@ -41,8 +41,8 @@ ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite
 apt-get install -q -y mongodb php5-mongo
 
 # Composer
-curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin
-sudo mv /usr/local/bin/composer.phar /usr/local/bin/composer # Rename to `composer`
+curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
+mv /usr/local/bin/composer.phar /usr/local/bin/composer # Rename to `composer`
 
 # Node.js
 # Installation on Wheezy: https://github.com/joyent/node/wiki/backports.debian.org
