@@ -51,4 +51,5 @@ alias mv='mv -iv'
 alias grep='grep --color=auto -in'
 alias ..='cd ..'
 
+alias ll='ls -AlF'
 alias gits='git status'
