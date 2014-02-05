@@ -1,4 +1,7 @@
 <?php
+/**
+ * Basic router for the PHP built-in web server.
+ */
 
 $root = __DIR__;
 $path = $root . parse_url($_SERVER['REQUEST_URI'])['path'];

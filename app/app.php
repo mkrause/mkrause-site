@@ -105,4 +105,4 @@ $app->get('/{path}', function() use ($app, $params) {
     return $app['twig']->render('home.twig', $params);
 })->assert('path', '.*');
 
-$app->run();
+return $app;
