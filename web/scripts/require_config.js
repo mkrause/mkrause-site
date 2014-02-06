@@ -1,4 +1,5 @@
-// Define window.require with our require.js config (will be picked up by require.js)
+
+// Configure require.js
 require.config({
     baseUrl: 'scripts',
     
