@@ -14,20 +14,20 @@ define([
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
                     .state('mkr', {
-                        templateUrl: "templates/mkr.html"
+                        templateUrl: "templates/mkr.html?" + (+new Date())
                     })
                     .state('mkr.index', {
                         url: "/home",
-                        templateUrl: "templates/mkr/home.html"
+                        templateUrl: "templates/mkr/home.html?" + (+new Date())
                     })
                     .state('mkr.about', {
                         url: "/about",
-                        templateUrl: "templates/mkr/about.html"
+                        templateUrl: "templates/mkr/about.html?" + (+new Date())
                     })
                     .state('mkr.crud', {
                         url: "/crud",
                         controller: "mkr.crud",
-                        templateUrl: "templates/mkr/crud.html"
+                        templateUrl: "templates/mkr/crud.html?" + (+new Date())
                     });
             })
             .controller('mkr.crud',

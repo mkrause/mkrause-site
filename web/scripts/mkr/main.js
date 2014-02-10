@@ -22,7 +22,7 @@ define([
                         }
                     })
                     .state('errors', {
-                        templateUrl: "templates/mkr.html"
+                        templateUrl: "templates/mkr.html?" + (+new Date())
                     })
                     .state('errors.pageNotFound', {
                         templateUrl: "templates/404.html"

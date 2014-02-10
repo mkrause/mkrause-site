@@ -12,7 +12,7 @@
 </IfModule>
 
 # Disable caching (for development)
-# <FilesMatch "\.(html|htm|js|css)$">
+# <FilesMatch "\.(html|htm|js|css|less)$">
 #     FileETag None
 #     <IfModule mod_headers.c>
 #         Header unset ETag
