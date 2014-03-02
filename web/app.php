@@ -1,6 +1,6 @@
 <?php
 /**
- * Publically accessible front controller.
+ * Publicly accessible front controller.
  */
 
 $app = require __DIR__ . '/../app/app.php';
