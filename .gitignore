@@ -1,6 +1,11 @@
+
+# Dependency management tools
 .vagrant
 vendor
 node_modules
+
+# Local config
+app/config/parameters.php
 
 # Web
 web/build

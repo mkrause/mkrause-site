@@ -1,22 +1,23 @@
 <?php
+/**
+ * Back-end for mkrause-site.
+ */
 
 use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$params = require __DIR__ . '/config/parameters.php';
+
 $app = new Silex\Application();
-$app['debug'] = true;
+$app['debug'] = !$parameters['production'];
 
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/templates',
     'twig.options' => array(
-        'debug' => true,
-    ),
+        'debug' => ($parameters['env'] !== 'production'),
+    )
 ));
-
-$params = array(
-    'env' => 'development'
-);
 
 $app->get('/api/blog', function() use ($app, $params) {
     $posts = array_fill(0, 5, array(
@@ -89,7 +90,6 @@ $app->get('/api/{coll}/{id}', function($coll, $id) use ($app, $db) {
 $app->put('/api/{coll}/{id}', function(Request $request, $coll, $id) use ($app, $db) {
     $instance = json_decode($request->getContent(), true);
     $instance['_id'] = $id;
-    var_dump($instance);exit;
     $db->$coll->save($instance);
     return true;
 });
