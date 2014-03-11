@@ -47,6 +47,7 @@ EOT;
 
 // Generic REST API
 
+/*
 try {
     $m = new MongoClient();
 } catch (MongoConnectionException $e) {
@@ -99,6 +100,7 @@ $app->delete('/api/{coll}/{id}', function($coll, $id) use ($app, $db) {
     $db->$coll->remove(array('_id' => new MongoId($id)));
     return true;
 });
+*/
 
 // Fallback route
 $app->get('/{path}', function() use ($app, $params) {

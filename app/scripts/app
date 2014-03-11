@@ -1,0 +1,94 @@
+#!/bin/bash
+# Application management tool
+
+# Bash configuration
+shopt -s nullglob # Expand globs with zero matches to zero arguments instead of the glob pattern
+shopt -s dotglob # Match dot files
+
+cli_args=("$@") # Save the CLI arguments
+
+# Get the absolute path for the current script
+# Source: http://stackoverflow.com/questions/59895
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Colors
+col_reset="\x1b[39;49;00m"
+col_red="\x1b[31;01m"
+col_green="\x1b[32;01m"
+col_yellow="\x1b[33;01m"
+col_blue="\x1b[34;01m"
+col_magenta="\x1b[35;01m"
+col_cyan="\x1b[36;01m"
+
+show_help() {
+    script_name="$(basename "${BASH_SOURCE[0]}")"
+    echo "usage: $script_name [--help] [--version]"
+}
+
+show_version() {
+    echo "version 0.1"
+}
+
+# Parse command line options (sets: $cmd, $args)
+parse_options() {
+    # http://stackoverflow.com/questions/402377/using-getopts-in-bash-shell-script-to-get-long-and-short-command-line-options
+    for arg in ${cli_args[@]}; do
+        case "$arg" in
+            -h | --help)
+                show_help
+                exit 0
+                ;;
+            -v | --version)
+                show_version
+                exit 0
+                ;;
+            --)
+                break
+                ;;
+            -? | --*)
+                # echo "Unknown option $arg"
+                # exit 1
+                ;;
+            
+            *)
+                if [ -z "$cmd" ]; then
+                    cmd=$arg
+                else
+                    args+=($arg)
+                fi
+                ;;
+        esac
+    done
+}
+
+# -----------------
+# Commands
+# -----------------
+
+deploy() {
+    host='77.74.53.173'
+    username='root'
+    path_local="${root}/../.."
+    path_remote='/var/www/mkrause.nl/public_html/test'
+    
+    echo "Synchronizing files..."
+    rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"
+}
+
+
+# Parse command line options
+cmd=""
+args=()
+parse_options
+
+# Run the specified command
+case "$cmd" in
+    deploy) deploy "${args[@]}" ;;
+    ?*) # Fallback (nonempty string)
+        echo "Unrecognized command \"$cmd\""
+        exit 1
+        ;;
+    *) # Fallback (empty string)
+        show_help
+        ;;
+esac
