@@ -72,7 +72,11 @@ deploy() {
     path_remote='/var/www/mkrause.nl/public_html/test'
     
     echo "Synchronizing files..."
-    rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"
+    
+    # Sync files
+    # -rvtpl recursive, verbose, preserve timestamps and permissions, sync symlinks
+    rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"\
+        --exclude .git --delete
 }
 
 
