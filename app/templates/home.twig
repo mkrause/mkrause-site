@@ -14,10 +14,9 @@
     <script src="vendor/less.js/dist/less-1.5.0.js"></script>
 {% endif %}
     
-    <link href='http://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:400,300">
 </head>
 <body>
-
 {% if env == 'production' %}
     <!--
         A little sparse isn't it! This site was built using AngularJS, and all the code has
@@ -38,7 +37,7 @@
         }
     });
 {% endif %}
-    // Run main.js (found in the directory specified by the require.js baseUrl)
+    // Run main.js (found in the directory specified by the RequireJS baseUrl)
     require(['main']);
     </script>
 </body>

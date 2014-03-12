@@ -7,8 +7,8 @@
     #    RewriteBase /
     #</IfModule>
 
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ app.php [QSA,L]
+    #RewriteCond %{REQUEST_FILENAME} !-f
+    #RewriteRule ^(.*)$ app.php [QSA,L]
 </IfModule>
 
 # Disable caching (for development)
