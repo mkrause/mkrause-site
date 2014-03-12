@@ -1,3 +1,4 @@
+// Top-level entry point
 define([
         'angular',
         'mkr/main'

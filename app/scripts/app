@@ -9,7 +9,7 @@ cli_args=("$@") # Save the CLI arguments
 
 # Get the absolute path for the current script
 # Source: http://stackoverflow.com/questions/59895
-root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Colors
 col_reset="\x1b[39;49;00m"
@@ -34,6 +34,7 @@ parse_options() {
     # http://stackoverflow.com/questions/402377/using-getopts-in-bash-shell-script-to-get-long-and-short-command-line-options
     for arg in ${cli_args[@]}; do
         case "$arg" in
+            --) break ;; # Use "--" as a signal to stop options processing
             -h | --help)
                 show_help
                 exit 0
@@ -42,14 +43,6 @@ parse_options() {
                 show_version
                 exit 0
                 ;;
-            --)
-                break
-                ;;
-            -? | --*)
-                # echo "Unknown option $arg"
-                # exit 1
-                ;;
-            
             *)
                 if [ -z "$cmd" ]; then
                     cmd=$arg
@@ -68,15 +61,45 @@ parse_options() {
 deploy() {
     host='77.74.53.173'
     username='root'
-    path_local="${root}/../.."
+    path_local="${script_dir}/../.."
     path_remote='/var/www/mkrause.nl/public_html/test'
     
-    echo "Synchronizing files..."
+    # Paths to exclude from syncing
+    # Note: all paths are relative to the source directory, and if you don't add a preceding "/"
+    # it will match *all* paths with that name
+    # http://askubuntu.com/questions/349613
+    excludes="--exclude=.DS_Store --exclude /.git"
+    includes=""
+    
+    restart_server=0
+    
+    # Options parsing
+    for arg in "${cli_args[@]}"; do
+        case "$arg" in
+            --) break ;;
+            --exclude=*)
+                path=${arg#--exclude=} # Remove the prefixed option name
+                excludes="$excludes --exclude $path" # Append the exclude to the list
+                ;;
+            --include=*)
+                path=${arg#--include=} # Remove the prefixed option name
+                includes="$includes --include $path" # Append the include to the list
+                ;;
+            --restart_server) restart_server=1 ;;
+        esac
+    done
+    
+    echo -e "${col_yellow}Synchronizing files...${col_reset}"
     
     # Sync files
     # -rvtpl recursive, verbose, preserve timestamps and permissions, sync symlinks
     rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"\
-        --exclude .git --delete
+        $excludes $includes --delete
+    
+    if [ "$restart_server" = 1 ]; then
+        echo -e "${col_yellow}Restarting server...${col_reset}"
+        ssh "${username}@${host}" "/etc/init.d/apache2 restart"
+    fi
 }
 
 
@@ -88,7 +111,7 @@ parse_options
 # Run the specified command
 case "$cmd" in
     deploy) deploy "${args[@]}" ;;
-    ?*) # Fallback (nonempty string)
+    ?*) # Fallback (non-empty string)
         echo "Unrecognized command \"$cmd\""
         exit 1
         ;;

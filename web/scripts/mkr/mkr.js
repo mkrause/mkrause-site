@@ -14,27 +14,27 @@ define([
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
                     .state('mkr', {
-                        templateUrl: "templates/mkr.html?" + (+new Date())
+                        templateUrl: "templates/mkr.html"
                     })
                     .state('mkr.index', {
                         url: "/home",
-                        templateUrl: "templates/mkr/home.html?" + (+new Date())
+                        templateUrl: "templates/mkr/home.html"
                     })
                     .state('mkr.about', {
                         url: "/about",
-                        templateUrl: "templates/mkr/about.html?" + (+new Date())
+                        templateUrl: "templates/mkr/about.html"
                     })
                     .state('mkr.crud', {
                         url: "/crud",
                         controller: "mkr.crud",
-                        templateUrl: "templates/mkr/crud.html?" + (+new Date())
+                        templateUrl: "templates/mkr/crud.html"
                     });
             })
             .controller('mkr.crud',
                 function($scope, Restangular) {
                     $scope.users = null;
                     Restangular.all('users').getList()
-                        .then(function(users) { console.log(users);$scope.users = users; });
+                        .then(function(users) { console.log(users); $scope.users = users; });
                     
                     $scope.newUser = {};
                     $scope.create = function() {
