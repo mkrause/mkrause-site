@@ -87,6 +87,10 @@ deploy() {
                 path=${arg#--include=} # Remove the prefixed option name
                 includes="$includes --include $path" # Append the include to the list
                 ;;
+            --rsync-options=*)
+                rsync_options=${arg#--rsync-options=}
+                options="$options $rsync_options"
+                ;;
             --restart-server) restart_server=1 ;;
             --dry-run) dry_run=1; options="$options --dry-run" ;;
         esac
