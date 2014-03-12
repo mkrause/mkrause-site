@@ -71,7 +71,9 @@ deploy() {
     excludes="--exclude=.DS_Store --exclude /.git"
     includes=""
     
+    options=""
     restart_server=0
+    dry_run=0
     
     # Options parsing
     for arg in "${cli_args[@]}"; do
@@ -85,19 +87,24 @@ deploy() {
                 path=${arg#--include=} # Remove the prefixed option name
                 includes="$includes --include $path" # Append the include to the list
                 ;;
-            --restart_server) restart_server=1 ;;
+            --restart-server) restart_server=1 ;;
+            --dry-run) dry_run=1; options="$options --dry-run" ;;
         esac
     done
     
-    echo -e "${col_yellow}Synchronizing files...${col_reset}"
+    echo -e "${col_green}Synchronizing files...${col_reset}"
+    
+    if [ "$dry_run" = 1 ]; then
+        echo -e "${col_yellow}(Dry run)${col_reset}"
+    fi
     
     # Sync files
     # -rvtpl recursive, verbose, preserve timestamps and permissions, sync symlinks
     rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"\
-        $excludes $includes --delete
+        $excludes $includes $options --delete
     
     if [ "$restart_server" = 1 ]; then
-        echo -e "${col_yellow}Restarting server...${col_reset}"
+        echo -e "${col_green}Restarting server...${col_reset}"
         ssh "${username}@${host}" "/etc/init.d/apache2 restart"
     fi
 }
