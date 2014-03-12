@@ -10,12 +10,12 @@ require __DIR__ . '/../vendor/autoload.php';
 $params = require __DIR__ . '/config/parameters.php';
 
 $app = new Silex\Application();
-$app['debug'] = ($parameters['env'] !== 'production');
+$app['debug'] = ($params['env'] !== 'production');
 
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/templates',
     'twig.options' => array(
-        'debug' => ($parameters['env'] !== 'production'),
+        'debug' => ($params['env'] !== 'production'),
     )
 ));
 
