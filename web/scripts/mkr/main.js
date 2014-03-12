@@ -11,7 +11,7 @@ define([
                 'ui.router',
                 'restangular',
                 mkrModule.name,
-                blogModule.name
+                //blogModule.name
             ])
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider

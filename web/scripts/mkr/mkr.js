@@ -28,6 +28,11 @@ define([
                         url: "/crud",
                         controller: "mkr.crud",
                         templateUrl: "templates/mkr/crud.html"
+                    })
+                    .state('mkr.blog', {
+                        url: "/blog",
+                        // controller: "mkr.blog",
+                        templateUrl: "templates/mkr/blog.html"
                     });
             })
             .controller('mkr.crud',
