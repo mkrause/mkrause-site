@@ -59,7 +59,7 @@ parse_options() {
 # -----------------
 
 deploy() {
-    host='77.74.53.173'
+    host='mkrause.nl'
     username='root'
     path_local="${script_dir}/../.."
     path_remote='/var/www/mkrause.nl/public_html/test'
@@ -113,6 +113,34 @@ deploy() {
     fi
 }
 
+edit() {
+    host='mkrause.nl'
+    username='root'
+    path_remote='/var/www/mkrause.nl/public_html/test'
+    
+    restart_server=0
+    custom_path=''
+    
+    # Options parsing
+    for arg in "${cli_args[@]}"; do
+        case "$arg" in
+            --) break ;;
+            --php-ini) custom_path='/etc/php5/cli/conf.d/custom.ini'; restart_server=1 ;;
+        esac
+    done
+    
+    if [ -n "$custom_path" ]; then
+        vim scp://${username}@${host}/${custom_path}
+    else
+        vim scp://${username}@${host}/${path_remote}/$1
+    fi
+    
+    if [ "$restart_server" = 1 ]; then
+        echo -e "${col_green}Restarting server...${col_reset}"
+        ssh "${username}@${host}" "/etc/init.d/apache2 restart"
+    fi
+}
+
 
 # Parse command line options
 cmd=""
@@ -122,6 +150,7 @@ parse_options
 # Run the specified command
 case "$cmd" in
     deploy) deploy "${args[@]}" ;;
+    edit) edit "${args[@]}" ;;
     ?*) # Fallback (non-empty string)
         echo "Unrecognized command \"$cmd\""
         exit 1
