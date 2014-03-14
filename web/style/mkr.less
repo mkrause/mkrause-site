@@ -1,14 +1,16 @@
 
 .mkr {
     .content {
+        position: relative;
         margin: 0 auto;
-        margin-top: 140px;
+        margin-top: 100px;
+        margin-bottom: 100px;
         padding-left: 40px;
         width: 500px;
         color: white;
         
         h1 {
-            font-size: 38px;
+            font-size: 45px;
             /* font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; */
             font-family: 'Lato', "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
                 Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -48,6 +50,53 @@
         
         .home-links a:hover {
             color: #ddd;
+        }
+        
+        .me {
+            position: absolute;
+            width: 200px;
+            margin-left: -225px;
+            
+            text-align: right;
+            
+            h1 {
+                font-size: 45px;
+                font-family: 'Lato', "HelveticaNeue-Light", "Helvetica Neue Light",
+                    "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+                font-weight: 400;
+                margin-top: -18px;
+                margin-bottom: 5px;
+            }
+            
+            .me-links {
+                position: relative;
+                z-index: 2;
+            }
+            
+            .me-links a {
+                color: white;
+                font-size: 30px;
+            }
+            
+            .me-links a:hover {
+                color: #ddd;
+            }
+            
+            .me-menu {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                font-size: 24px;
+            }
+            
+            .me-menu a {
+                color: white;
+                text-decoration: none;
+            }
+            
+            .me-menu a:hover {
+                color: #ddd;
+            }
         }
     }
 }
