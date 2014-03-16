@@ -118,7 +118,7 @@ cmd_sync() {
     # Note: all paths are relative to the source directory, and if you don't add a preceding "/"
     # it will match *all* paths with that name
     # http://askubuntu.com/questions/349613
-    excludes="--exclude=.DS_Store --exclude /.git --exclude /.vagrant"
+    excludes="--exclude-from .gitignore --exclude=.DS_Store --exclude /.git"
     includes=""
     
     options=""
@@ -156,13 +156,15 @@ cmd_sync() {
     # -rvtpl recursive, verbose, preserve timestamps and permissions, sync symlinks
     set -x;
     rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"\
-        $excludes $includes $options --delete
+        $includes $excludes $options --delete
     { set +x; } 2>/dev/null # Quietly disable set -x
     
     if [ "$restart_server" = 1 ]; then
         echo -e "${col_green}Restarting server...${col_reset}"
         ssh "${username}@${host}" "/etc/init.d/apache2 restart"
     fi
+    
+    #TODO: provide a way to actually install the project if it hasn't been installed yet?
     
     echo -e "${col_green}Done.${col_reset}"
 }
