@@ -64,7 +64,7 @@
                 font-family: 'Lato', "HelveticaNeue-Light", "Helvetica Neue Light",
                     "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
                 font-weight: 400;
-                margin-top: -18px;
+                margin-top: -15px;
                 margin-bottom: 5px;
             }
             
@@ -76,10 +76,16 @@
             .me-links a {
                 color: white;
                 font-size: 30px;
+                opacity: .5;
             }
             
             .me-links a:hover {
-                color: #ddd;
+                /*color: #ddd;*/
+                opacity: .8;
+            }
+            
+            .me-links a:focus {
+                outline: none;
             }
             
             .me-menu {
@@ -97,6 +103,11 @@
             .me-menu a:hover {
                 color: #ddd;
             }
+        }
+        
+        .subtitle {
+            opacity: .5;
+            font-size: 12px;
         }
     }
 }

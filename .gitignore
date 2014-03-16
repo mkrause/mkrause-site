@@ -5,6 +5,7 @@ vendor
 node_modules
 
 # Local config
+app/workflow_params.sh
 app/config/parameters.php
 
 # Web
