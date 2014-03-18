@@ -1,13 +1,15 @@
 
-# Dependency management tools
+# Tool support
 .vagrant
-vendor
+
+# Locally installed dependencies
 node_modules
+vendor
+web/vendor
 
 # Local config
 app/workflow_params.sh
 app/config/parameters.php
 
-# Web
+# Build files
 web/build
-web/vendor
