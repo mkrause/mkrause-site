@@ -1,16 +1,17 @@
 {
-    "name": "mkrause-site",
-    "version": "0.1.0",
-    "dependencies": {
-        "ngmin": "~0.4"
-    },
-    "devDependencies": {
-        "grunt": "~0.4",
-        "grunt-contrib-jshint": "~0.8",
-        "grunt-contrib-nodeunit": "~0.3",
-        "grunt-contrib-concat": "~0.3.0",
-        "grunt-contrib-uglify": "~0.3",
-        "grunt-ngmin": "0.0.3",
-        "grunt-contrib-requirejs": "~0.4"
-    }
+  "name": "mkrause-site",
+  "version": "0.1.0",
+  "dependencies": {
+    "ngmin": "~0.4"
+  },
+  "devDependencies": {
+    "grunt": "~0.4",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-nodeunit": "~0.3.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.3.0",
+    "grunt-ngmin": "~0.0.3",
+    "grunt-contrib-requirejs": "~0.4.0",
+    "grunt-contrib-less": "~0.10.0"
+  }
 }

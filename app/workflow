@@ -111,26 +111,28 @@ cmd_configure() {
 }
 
 cmd_status() {
+    # composer
     echo -e "${col_green}Checking composer...${col_reset}"
-    
     # Do a dry run update of composer to see which dependencies may be updated
     composer update --dry-run | grep -- '- Updating' | sed -E 's/^(.+)- Updating //'
-    echo -e "${col_yellow}Run \"composer update\"${col_reset}"
+    echo -e "${col_yellow}To update, run \"composer update\"${col_reset}"
     
+    # npm
     echo -e "${col_green}Checking npm...${col_reset}"
-    
     # Get all outdated packages, filter on lines that look like "[package]@[version]"
     npm outdated | grep -E '^[^ ]+@[^ ]+'
-    echo -e "${col_yellow}Run \"npm update\"${col_reset}"
+    # Note: older versions of npm don't include devDependencies in "npm outdated":
+    # https://github.com/npm/npm/issues/3250
+    echo -e "${col_yellow}To update, run \"npm update\"${col_reset}"
     
+    # bower
     echo -e "${col_green}Checking bower...${col_reset}"
-    
     # Have bower generate the list of dependencies, then check for lines indicating a new release
     # (Also, remove the tree display prefix)
     cd "${root_dir}/web"
-    bower list | grep 'available\|latest' | sed -E 's/^[^a-zA-Z0-9]+//'
+    bower list # | grep 'available\|latest' | sed -E 's/^[^a-zA-Z0-9]+//'
     cd "${root_dir}"
-    echo -e "${col_yellow}Run \"bower update\"${col_reset}"
+    echo -e "${col_yellow}To update, run \"bower update\"${col_reset}"
 }
 
 cmd_update() {
