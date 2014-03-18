@@ -25,8 +25,19 @@ col_magenta="\x1b[35;01m"
 col_cyan="\x1b[36;01m"
 
 show_help() {
-    script_name="$(basename "${BASH_SOURCE[0]}")"
-    echo "usage: $script_name [--help] [--version]"
+    cat <<EOT
+usage: workflow [--help] [--version]
+                <command> [<args>]
+
+Commands:
+configure   Configure a newly created working directory.
+status      Check the state of the project.
+update      Update dependencies.
+open        Open any necessary applications to work on this project (e.g. editor).
+sync        Upload files to a remote server.
+watch       Watch for changes in the project directory, and synchronize automatically.
+edit        Edit files on a remote server.
+EOT
 }
 
 show_version() {
@@ -69,8 +80,8 @@ parse_options() {
 # Commands
 # -----------------
 
-cmd_install() {
-    echo -e "${col_green}Installing local configuration...${col_reset}"
+cmd_configure() {
+    echo -e "${col_green}Configuring local configuration...${col_reset}"
     
     for dist_file in "${config_dist_files[@]}"; do
         src="$dist_file"
@@ -83,6 +94,7 @@ cmd_install() {
         fi
         
         (set -x; cp "${root_dir}/${src}" "${root_dir}/${dst}")
+        vim "${root_dir}/${dst}"
     done
     
     # Check permissions/owners (writables, executables, etc.)
@@ -96,6 +108,29 @@ cmd_install() {
     # bower install
     
     echo -e "${col_green}Done.${col_reset}"
+}
+
+cmd_status() {
+    echo -e "${col_green}Checking composer...${col_reset}"
+    
+    # Do a dry run update of composer to see which dependencies may be updated
+    composer update --dry-run | grep -- '- Updating' | sed -E 's/^(.+)- Updating //'
+    echo -e "${col_yellow}Run \"composer update\"${col_reset}"
+    
+    echo -e "${col_green}Checking npm...${col_reset}"
+    
+    # Get all outdated packages, filter on lines that look like "[package]@[version]"
+    npm outdated | grep -E '^[^ ]+@[^ ]+'
+    echo -e "${col_yellow}Run \"npm update\"${col_reset}"
+    
+    echo -e "${col_green}Checking bower...${col_reset}"
+    
+    # Have bower generate the list of dependencies, then check for 'latest is '
+    # (Also, remove the tree display prefix)
+    cd "${root_dir}/web"
+    bower list | grep 'latest is ' | sed -E 's/^[^a-zA-Z0-9]+//'
+    cd "${root_dir}"
+    echo -e "${col_yellow}Run \"bower update\"${col_reset}"
 }
 
 cmd_update() {
@@ -200,6 +235,11 @@ cmd_edit() {
 }
 
 cmd_watch() {
+    # A few alternatives:
+    # inotify (Linux)
+    # https://github.com/alandipert/fswatch (OS X)
+    # https://github.com/axkibe/lsyncd
+    
     fswatch . "${script_dir}/workflow sync"
 }
 
@@ -216,8 +256,8 @@ options=()
 parse_options "$@"
 
 # Not installed yet?
-if [ "$cmd" != install ] && [ ! -f "${script_dir}/workflow_params.sh" ]; then
-    echo -e "${col_red}This app is not yet installed! Run the \"install\" command.${col_reset}"
+if [ "$cmd" != configure ] && [ ! -f "${script_dir}/workflow_params.sh" ]; then
+    echo -e "${col_red}This app is not yet configured! Run the \"configure\" command.${col_reset}"
     exit 1
 fi
 
@@ -226,7 +266,8 @@ fi
 
 # Run the specified command
 case "$cmd" in
-    install) cmd_install "${args[@]}" "${options[@]}" ;;
+    configure) cmd_configure "${args[@]}" "${options[@]}" ;;
+    status) cmd_status "${args[@]}" "${options[@]}" ;;
     update) cmd_update "${args[@]}" "${options[@]}" ;;
     sync) cmd_sync "${args[@]}" "${options[@]}" ;;
     edit) cmd_edit "${args[@]}" "${options[@]}" ;;
