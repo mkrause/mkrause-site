@@ -2,22 +2,30 @@
 @import url("../vendor/bootstrap/dist/css/bootstrap-theme.css");
 @import url("../vendor/font-awesome/css/font-awesome.min.css");
 
-/* http://www.yearofmoo.com/2013/08/remastered-animation-in-angularjs-1-2.html#how-to-make-animations-in-angularjs%20angular-animate */
-.ng-enter, .ng-leave {
-    transition: 150ms linear all;
+.ease-in .ng-enter, .ease-in .ng-leave {
+    transition: all .2s ease-in-out;
 }
 
-/* Ease in on enter */
-.ease-in.ng-enter { opacity: 0; }
-.ease-in.ng-enter-active { opacity: 1; }
-.ease-in.ng-leave {
-    display: none; /* Immediately hide on leaving, to avoid showing two elements at once */
+.ease-in .ng-enter {
+    opacity: 0;
+}
+
+.ease-in .ng-enter-active {
+    opacity: 1;
+}
+
+.ease-in .ng-leave {
+    opacity: 1;
+}
+
+.ease-in .ng-leave-active {
+    opacity: 0;
 }
 
 html, body {
     margin: 0;
     padding: 0;
-    font-family: 'Lato', "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
+    font-family: "Lato", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
         Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 15px;
     font-weight: 300;

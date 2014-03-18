@@ -9,6 +9,7 @@ define([
     function(angular, ngAnimate, uiRouter, mkrModule, blogModule) {
         return angular.module('mkr.main', [
                 'ui.router',
+                'ngAnimate',
                 'restangular',
                 mkrModule.name,
                 //blogModule.name
