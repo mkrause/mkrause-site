@@ -125,10 +125,10 @@ cmd_status() {
     
     echo -e "${col_green}Checking bower...${col_reset}"
     
-    # Have bower generate the list of dependencies, then check for 'latest is '
+    # Have bower generate the list of dependencies, then check for lines indicating a new release
     # (Also, remove the tree display prefix)
     cd "${root_dir}/web"
-    bower list | grep 'latest is ' | sed -E 's/^[^a-zA-Z0-9]+//'
+    bower list | grep 'available\|latest' | sed -E 's/^[^a-zA-Z0-9]+//'
     cd "${root_dir}"
     echo -e "${col_yellow}Run \"bower update\"${col_reset}"
 }
