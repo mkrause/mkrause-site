@@ -8,8 +8,8 @@ define([
     ],
     function(angular, ngAnimate, uiRouter, mkrModule, blogModule) {
         return angular.module('mkr.main', [
+                // 'ngAnimate',
                 'ui.router',
-                'ngAnimate',
                 'restangular',
                 mkrModule.name,
                 //blogModule.name
