@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$params = require __DIR__ . '/config/parameters.php';
+$params = require __DIR__ . '/config/params.php';
 
 $app = new Silex\Application();
 $app['debug'] = ($params['env'] !== 'production');

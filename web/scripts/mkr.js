@@ -17,6 +17,7 @@ define([
             ])
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
+                    // Empty state, needs to be defined in order to use `mkr.X`
                     .state('mkr', {
                         template: "<div ui-view></div>"
                     })
@@ -32,7 +33,7 @@ define([
                     })
                     .state('mkr.errors.pageNotFound', {
                         templateUrl: "templates/404.html",
-                        controller: 'mkr.pageNotFound'
+                        controller: 'mkr.errors.pageNotFound'
                     });
                 
                 // Fallback: if no state matches, show page not found page (without altering
@@ -45,7 +46,7 @@ define([
             .config(function($locationProvider) {
                 $locationProvider.html5Mode(true);
             })
-            .controller('mkr.pageNotFound', function() {})
+            .controller('mkr.errors.pageNotFound', function() {})
             .run(function($rootScope, $state) {
                 $rootScope.layout = {
                     update: function(key, value) { this[key] = value; }
