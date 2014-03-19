@@ -23,10 +23,7 @@ define([
                     })
                     .state('mkr.index', {
                         url: "/",
-                        controller: function($state) {
-                            // Change to the given state without altering the URL
-                            $state.transitionTo('mkr.site.index', null, { location: false });
-                        }
+                        controller: "mkr.index"
                     })
                     .state('mkr.errors', {
                         templateUrl: "templates/mkr.html"
@@ -45,6 +42,10 @@ define([
             })
             .config(function($locationProvider) {
                 $locationProvider.html5Mode(true);
+            })
+            .controller('mkr.index', function($state) {
+                // Change to the given state without altering the URL
+                $state.transitionTo('mkr.site.index', null, { location: false });
             })
             .controller('mkr.errors.pageNotFound', function() {})
             .run(function($rootScope, $state) {

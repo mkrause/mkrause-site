@@ -1,6 +1,11 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        
+        jshint: {
+            all: ['Gruntfile.js', 'web/scripts/**/*.js']
+        },
+        
         mainJsPath: "web/scripts/main.js",
         mainJsBuildPath: "web/build/main.js",
         mainCssPath: "web/style/main.css",
@@ -68,6 +73,7 @@ module.exports = function(grunt) {
         }
     });
     
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-ngmin');
@@ -76,6 +82,6 @@ module.exports = function(grunt) {
     
     // Tasks
     grunt.registerTask('build:js', ['requirejs:js', 'ngmin', 'uglify']);
-    grunt.registerTask('build:css', ['requirejs:css']);
-    grunt.registerTask('default', ['build:js']);
+    grunt.registerTask('build:css', ['less:production']);
+    grunt.registerTask('default', ['build:js', 'build:css']);
 };

@@ -27,7 +27,7 @@ define([
             })
             .controller('blog.post', function($scope, $sce, $stateParams, Restangular) {
                 Restangular.one('blog', $stateParams.id).get()
-                    .then(function(postHtml) { $scope.post = $sce.trustAsHtml(postHtml) });
+                    .then(function(postHtml) { $scope.post = $sce.trustAsHtml(postHtml); });
             })
             .config(function($stateProvider) {
                 $stateProvider
