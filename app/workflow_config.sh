@@ -1,6 +1,6 @@
 config_dist_files=(
     'app/workflow_params.sh.dist'
-    'app/config/parameters.php.dist'
+    'app/config/params.php.dist'
 )
 
 config_remote_host='mkrause.nl'
