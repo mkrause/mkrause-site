@@ -7,14 +7,6 @@
     <base href="{{ app.request.getBasePath() == '/' ? '/' : app.request.getBasePath() ~ '/' }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!--
-    <script>
-    // Dynamically set the base URL
-    var baseUrl = location.href.substr(0, location.href.lastIndexOf("/") + 1);
-    document.write('<base href="' + baseUrl + '">');
-    </script>
-    -->
-    
 {% if env == 'production' -%}
     <link rel="stylesheet" href="build/main.css">
 {% else %}
@@ -23,14 +15,6 @@
 {% endif %}
 </head>
 <body>
-{% if env == 'production' %}
-    <!--
-        A little sparse right? This site was built using AngularJS, and all the code has
-        been combined and minimized for performance. You can view the original source on:
-        https://github.com/mkrause/mkrause-site
-    -->
-{% endif %}
-    
     <div id="container" ui-view></div>
     
     <script src="vendor/requirejs/require.js"></script>
@@ -39,6 +23,7 @@
 {% if env == 'production' %}
     require.config({
         paths: {
+            // Override the main module with the build file
             main: '../build/main'
         }
     });

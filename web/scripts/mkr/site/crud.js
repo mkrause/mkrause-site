@@ -4,7 +4,7 @@ define([
         'restangular'
     ],
     function(angular, uiRouter, restangular) {
-        return angular.module('main', [
+        return angular.module('mkr.site.crud', [
                 'ui.router',
                 'restangular'
             ])
@@ -13,26 +13,10 @@ define([
             })
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
-                    .state('mkr', {
-                        templateUrl: "templates/mkr.html"
-                    })
-                    .state('mkr.index', {
-                        url: "/home",
-                        templateUrl: "templates/mkr/home.html"
-                    })
-                    .state('mkr.about', {
-                        url: "/about",
-                        templateUrl: "templates/mkr/about.html"
-                    })
                     .state('mkr.crud', {
                         url: "/crud",
                         controller: "mkr.crud",
                         templateUrl: "templates/mkr/crud.html"
-                    })
-                    .state('mkr.blog', {
-                        url: "/blog",
-                        // controller: "mkr.blog",
-                        templateUrl: "templates/mkr/blog.html"
                     });
             })
             .controller('mkr.crud',

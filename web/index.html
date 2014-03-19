@@ -7,10 +7,16 @@
     <base href="/test/web/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!--
+    <script>
+    // Dynamically set the base URL
+    var baseUrl = location.href.substr(0, location.href.lastIndexOf("/") + 1);
+    document.write('<base href="' + baseUrl + '">');
+    </script>
+    -->
+    
     <link rel="stylesheet/less" href="style/main.less">
     <script src="vendor/less.js/dist/less-1.5.0.js"></script>
-    
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:400,300">
 </head>
 <body>
     <div id="container" ui-view></div>

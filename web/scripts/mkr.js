@@ -1,32 +1,36 @@
-// Main module: integrates all the individual feature modules
+// Module definition: `mkr`
+// Top-level module that integrates all the different features of the application.
 define([
         'angular',
         'angular-animate',
         'angular-ui-router',
-        'mkr/mkr',
-        'mkr/blog'
+        'mkr/site',
+        // 'mkr/blog'
     ],
-    function(angular, ngAnimate, uiRouter, mkrModule, blogModule) {
-        return angular.module('mkr.main', [
-                // 'ngAnimate',
+    function(angular, ngAnimate, uiRouter) {
+        return angular.module('mkr', [
+                //'ngAnimate',
                 'ui.router',
                 'restangular',
-                mkrModule.name,
-                //blogModule.name
+                'mkr.site'
+                //'mkr.blog'
             ])
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
-                    .state('index', {
+                    .state('mkr', {
+                        template: "<div ui-view></div>"
+                    })
+                    .state('mkr.index', {
                         url: "/",
                         controller: function($state) {
                             // Change to the given state without altering the URL
-                            $state.transitionTo('mkr.index', null, { location: false });
+                            $state.transitionTo('mkr.site.index', null, { location: false });
                         }
                     })
-                    .state('errors', {
+                    .state('mkr.errors', {
                         templateUrl: "templates/mkr.html"
                     })
-                    .state('errors.pageNotFound', {
+                    .state('mkr.errors.pageNotFound', {
                         templateUrl: "templates/404.html",
                         controller: 'mkr.pageNotFound'
                     });
@@ -35,7 +39,7 @@ define([
                 // the URL in the browser)
                 $urlRouterProvider.otherwise(function($injector, $location) {
                     var $state = $injector.get('$state');
-                    $state.transitionTo('errors.pageNotFound', null, { location: false });
+                    $state.transitionTo('mkr.errors.pageNotFound', null, { location: false });
                 });
             })
             .config(function($locationProvider) {

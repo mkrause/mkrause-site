@@ -1,12 +1,12 @@
-// Top-level entry point
+// Main entry point
 define([
         'angular',
-        'mkr/main'
+        'mkr'
     ],
-    function(angular, mainModule) {
+    function(angular) {
         angular.element(document).ready(function() {
             // Manually bootstrap angular
-            angular.bootstrap(document, [mainModule.name]);
+            angular.bootstrap(document, ['mkr']);
         });
     }
 );

@@ -16,9 +16,9 @@ require.config({
     },
     
     // Shims for libraries that don't define require.js modules of themselves
+    // Important: don't forget to specify dependencies so we don't load modules in the wrong order
     shim: {
         'angular': { exports: 'angular' },
-        // Important: specify dependencies so we don't load dependencies in the wrong order
         'angular-route': { deps: ['angular'] },
         'angular-animate': { deps: ['angular'] },
         'restangular': { deps: ['angular', 'underscore'] },
