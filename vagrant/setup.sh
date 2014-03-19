@@ -53,6 +53,7 @@ apt-get install -q -y nodejs-legacy
 if ! which npm; then
     curl https://npmjs.org/install.sh | clean=no sh
     npm install -g bower
+    npm install -g grunt-cli
 fi
 
 rm -rf /var/www
