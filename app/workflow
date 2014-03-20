@@ -25,7 +25,7 @@ col_magenta="\x1b[35;01m"
 col_cyan="\x1b[36;01m"
 
 show_help() {
-    cat <<EOT
+    cat <<'EOT'
 usage: workflow [--help] [--version]
                 <command> [<args>]
 
@@ -138,11 +138,23 @@ cmd_status() {
 cmd_update() {
     echo -e "${col_green}Updating dependencies.${col_reset}"
     
-    # composer install
-    # npm install
-    # bower install
+    # composer
+    composer update
+    
+    # npm
+    npm update
+    
+    # bower
+    cd "${root_dir}/web"
+    bower update
+    cd "${root_dir}"
     
     echo -e "${col_green}Done.${col_reset}"
+}
+
+cmd_deploy() {
+    #...
+    return
 }
 
 cmd_sync() {
@@ -271,6 +283,7 @@ case "$cmd" in
     configure) cmd_configure "${args[@]}" "${options[@]}" ;;
     status) cmd_status "${args[@]}" "${options[@]}" ;;
     update) cmd_update "${args[@]}" "${options[@]}" ;;
+    deploy) cmd_deploy "${args[@]}" "${options[@]}" ;;
     sync) cmd_sync "${args[@]}" "${options[@]}" ;;
     edit) cmd_edit "${args[@]}" "${options[@]}" ;;
     watch) cmd_watch "${args[@]}" "${options[@]}" ;;
