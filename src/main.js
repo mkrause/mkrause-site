@@ -102,11 +102,13 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
     
     var postsDir = path.join(root, 'app/posts');
     fs.list(postsDir)
+        // Filter out only those posts that match the given ID (should be one or zero)
         .invoke('filter', function(fileName) {
             var matches = fileName.match(/^\d+_([^_]+)_/);
             var postId = matches[1];
             return postId === id;
         })
+        // Parse the file, if any
         .then(function(fileNamesWithId) {
             if (fileNamesWithId.length < 1) {
                 res.send("Post not found", 404);
@@ -120,10 +122,9 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
             var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
             return fs.read(filePath).then(parseFn);
         })
-        .then(function(post) {
-            res.setHeader("Content-Type", "application/json");
-            res.send(post);
-        })
+        // Send response
+        .then(res.send)
+        // Error handling
         .fail(function(code) {
             if (code === 404) {
                 res.send("Post not found", 404);
