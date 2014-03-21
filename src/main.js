@@ -19,7 +19,6 @@ var root = path.join(__dirname, '..');
 var app = express();
 
 app.set('port', process.env.PORT || 8000);
-app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../app/templates'));
 app.set('view engine', 'ejs');
 
