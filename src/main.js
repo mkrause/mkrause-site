@@ -124,11 +124,11 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
         // Send response
         .then(res.send.bind(res))
         // Error handling
-        .fail(function(code) {
-            if (code === 404) {
+        .fail(function(reason) {
+            if (reason === 404) {
                 res.send("Post not found", 404);
             } else {
-                console.error(code);
+                console.error(reason);
                 res.send("Server error", 500);
             }
         });
