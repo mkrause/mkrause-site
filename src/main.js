@@ -16,7 +16,7 @@ var root = path.join(__dirname, '..');
 
 var app = express();
 
-app.set('port', 80);
+app.set('port', process.env.PORT || 80);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../app/templates'));
 app.set('view engine', 'ejs');
@@ -44,31 +44,25 @@ function parsePost(fileName, fileContents) {
         properties = yaml.load(yamlText);
     }
     
-    var post = _.defaults(properties, {
-        title: "(No title)",
+    // Parse the file name for some extra properties
+    // Format: "[date]_[id]_[slug].md"
+    var fileNameProps = {};
+    var fileNameRegex = /^(\d{4})(\d{2})(\d{2})_([^_]+)_(.+)\./;
+    var fileNameMatches = fileName.match(fileNameRegex);
+    
+    fileNameProps.id = fileNameMatches[4];
+    fileNameProps.date = fileNameMatches[1]
+        + "-" + fileNameMatches[2]
+        + "-" + fileNameMatches[3];
+    fileNameProps.slug = fileNameMatches[5];
+    
+    var post = _.defaults(properties, fileNameProps, {
+        id: null,
+        title: null,
         slug: null,
         date: null,
         published: false
     });
-    
-    // Fill in the date of the post using the file name as a fallback
-    if (!post.date) {
-        var dateMatches = fileName.match(/^(\d{4})(\d{2})(\d{2})/);
-        if (dateMatches) {
-            var date = dateMatches[1]
-                + "-" + dateMatches[2]
-                + "-" + dateMatches[3];
-            post.date = date;
-        }
-    }
-    
-    // Use the name of the file as a fallback for the slug
-    if (!post.slug) {
-        var slugMatches = fileName.match(/^\d+_(.+)\./);
-        if (slugMatches) {
-            post.slug = slugMatches[1];
-        }
-    }
     
     // Parse the body of the file using a Markdown parser
     var bodyMarkdown = fileContents.replace(propertiesRegex, '');
@@ -91,9 +85,8 @@ app.get('/api/posts', function(req, res) {
         // Wait for everything to be resolved
         .then(q.all)
         // Remove any posts not marked as published
-        .invoke('filter', _.property('published'))
-        // Render as JSON and render
-        .then(JSON.stringify)
+        .invoke('filter', _.matches({ published: true }))
+        // Send response
         .then(function(posts) {
             res.setHeader("Content-Type", "application/json");
             res.send(posts);
@@ -102,8 +95,44 @@ app.get('/api/posts', function(req, res) {
         .fail(function(reason) {
             console.error(reason);
             res.send("Server error, unable to load posts", 500);
+        });
+});
+
+app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
+    var id = req.route.params.id;
+    
+    var postsDir = path.join(root, 'app/posts');
+    fs.list(postsDir)
+        .invoke('filter', function(fileName) {
+            var matches = fileName.match(/^\d+_([^_]+)_/);
+            var postId = matches[1];
+            return postId === id;
         })
-        .done();
+        .then(function(fileNamesWithId) {
+            if (fileNamesWithId.length < 1) {
+                res.send("Post not found", 404);
+                return;
+            }
+            
+            // Should only be one matching file
+            var fileName = fileNamesWithId[0];
+            
+            var filePath = path.join(postsDir, fileName);
+            var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
+            return fs.read(filePath).then(parseFn);
+        })
+        .then(function(post) {
+            res.setHeader("Content-Type", "application/json");
+            res.send(post);
+        })
+        .fail(function(code) {
+            if (code === 404) {
+                res.send("Post not found", 404);
+            } else {
+                console.error(code);
+                res.send("Server error", 500);
+            }
+        });
 });
 
 // Fallback route

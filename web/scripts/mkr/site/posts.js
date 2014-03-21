@@ -48,18 +48,21 @@ define([
                 $scope.posts = posts.map(function(post, index) {
                     var id = index + 1;
                     return {
-                        id: id,
+                        id: post.id,
                         title: post.title,
                         date: post.date,
                         body: $sce.trustAsHtml(post.body),
-                        slug: 'post' + id
+                        slug: post.slug
                     };
                 });
             })
             .controller('mkr.site.posts.view', function($scope, $sce, post) {
                 $scope.post = {
+                    id: post.id,
                     title: post.title,
-                    body: $sce.trustAsHtml(post.body)
+                    date: post.date,
+                    body: $sce.trustAsHtml(post.body),
+                    slug: post.slug
                 };
             });
     }

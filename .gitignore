@@ -10,4 +10,7 @@ web/vendor
 app/workflow/params.sh
 
 # Build files
-web/build
+web/build/*
+
+# Content
+app/posts/*
