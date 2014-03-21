@@ -9,7 +9,7 @@ var yaml = require('js-yaml');
 var marked = require('marked');
 
 marked.setOptions({
-    sanitize: false,
+    // sanitize: false
 });
 
 var config = require('../app/config/config.js');
