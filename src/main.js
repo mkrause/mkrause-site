@@ -74,11 +74,10 @@ function parsePost(fileName, fileContents) {
 }
 
 app.get('/api/posts', function(req, res) {
-    var postsDir = path.join(root, 'app/posts');
-    fs.list(postsDir)
+    fs.list(config.postsDir)
         // For each file, read the contents and parse it to a JSON representation
         .invoke('map', function(fileName) {
-            var filePath = path.join(postsDir, fileName);
+            var filePath = path.join(config.postsDir, fileName);
             var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
             
             // Read the file and parse it
@@ -100,8 +99,7 @@ app.get('/api/posts', function(req, res) {
 app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
     var id = req.route.params.id;
     
-    var postsDir = path.join(root, 'app/posts');
-    fs.list(postsDir)
+    fs.list(config.postsDir)
         // Filter out only those posts that match the given ID (should be one or zero)
         .invoke('filter', function(fileName) {
             var matches = fileName.match(/^\d+_([^_]+)_/);
@@ -117,7 +115,7 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
             // Should only be one matching file
             var fileName = fileNamesWithId[0];
             
-            var filePath = path.join(postsDir, fileName);
+            var filePath = path.join(config.postsDir, fileName);
             var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
             return fs.read(filePath).then(parseFn);
         })
