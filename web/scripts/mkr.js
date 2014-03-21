@@ -4,17 +4,19 @@ define([
         'angular',
         'angular-animate',
         'angular-ui-router',
-        'mkr/site',
-        // 'mkr/blog'
+        'restangular',
+        'mkr/site'
     ],
-    function(angular, ngAnimate, uiRouter) {
+    function(angular, ngAnimate, uiRouter, restangular) {
         return angular.module('mkr', [
                 //'ngAnimate',
                 'ui.router',
                 'restangular',
                 'mkr.site'
-                //'mkr.blog'
             ])
+            .config(function(RestangularProvider) {
+                RestangularProvider.setBaseUrl('app.php/api');
+            })
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
                     // Empty state, needs to be defined in order to use `mkr.X`

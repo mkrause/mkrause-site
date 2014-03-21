@@ -21,6 +21,12 @@ module.exports = function(grunt) {
                     optimize: "none"
                 }
             },
+            js_almond: {
+                options: {
+                    almond: true
+                    // TODO
+                }
+            }
             css: {
                 options: {
                     cssIn: "<%= mainCssPath %>",

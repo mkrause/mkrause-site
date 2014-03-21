@@ -1,12 +1,14 @@
 define([
         'angular',
         'angular-ui-router',
-        'restangular'
+        'restangular',
+        'mkr/site/posts'
     ],
     function(angular, uiRouter, restangular) {
         return angular.module('mkr.site', [
                 'ui.router',
-                'restangular'
+                'restangular',
+                'mkr.site.posts'
             ])
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
@@ -15,18 +17,16 @@ define([
                         templateUrl: "templates/mkr.html"
                     })
                     .state('mkr.site.index', {
-                        url: "/home",
-                        templateUrl: "templates/mkr/home.html"
-                    })
-                    .state('mkr.site.posts', {
-                        url: "/posts",
-                        controller: "mkr.posts",
-                        templateUrl: "templates/mkr/blog.html"
+                        controller: "mkr.site.index"
                     })
                     .state('mkr.site.about', {
                         url: "/about",
                         templateUrl: "templates/mkr/about.html"
                     });
+            })
+            .controller('mkr.site.index', function($state) {
+                // Change to the given state without altering the URL
+                $state.transitionTo('mkr.site.posts.list', null, { location: false });
             });
     }
 );
