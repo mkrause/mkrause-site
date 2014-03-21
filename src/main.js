@@ -89,7 +89,7 @@ app.get('/api/posts', function(req, res) {
         // Remove any posts not marked as published
         .invoke('filter', _.matches({ published: true }))
         // Send response
-        .then(res.send)
+        .then(res.send.bind(res))
         // Error handling
         .fail(function(reason) {
             console.error(reason);
@@ -111,8 +111,7 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
         // Parse the file, if any
         .then(function(fileNamesWithId) {
             if (fileNamesWithId.length < 1) {
-                res.send("Post not found", 404);
-                return;
+                throw 404;
             }
             
             // Should only be one matching file
@@ -123,7 +122,7 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
             return fs.read(filePath).then(parseFn);
         })
         // Send response
-        .then(res.send)
+        .then(res.send.bind(res))
         // Error handling
         .fail(function(code) {
             if (code === 404) {
