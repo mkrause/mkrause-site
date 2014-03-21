@@ -16,36 +16,51 @@ define([
                     .state('mkr.site.posts.list', {
                         url: "/posts",
                         controller: "mkr.site.posts.list",
-                        templateUrl: "templates/mkr/posts.html"
+                        templateUrl: "templates/mkr/posts.html",
+                        resolve: {
+                            posts: function(Restangular) {
+                                return Restangular.all('posts').getList();
+                            }
+                        }
                     })
                     .state('mkr.site.posts.view', {
                         url: "/posts/{id}",
-                        controller: "blog.list",
-                        templateUrl: "templates/"
+                        controller: "mkr.site.posts.view",
+                        templateUrl: "templates/mkr/post_view.html",
+                        resolve: {
+                            post: function(Restangular, $stateParams) {
+                                return Restangular.one('posts', $stateParams.id).get();
+                            }
+                        }
                     })
                     .state('mkr.site.posts.post_with_slug', {
                         url: "/posts/{id}/{slug}",
-                        // controller: 'blog.post',
-                        templateUrl: "templates/posts/view.html"
+                        controller: "mkr.site.posts.view",
+                        templateUrl: "templates/mkr/post_view.html",
+                        resolve: {
+                            post: function(Restangular, $stateParams) {
+                                return Restangular.one('posts', $stateParams.id).get();
+                            }
+                        }
                     });
             })
-            .controller('mkr.site.posts.list', function($scope, $sce, Restangular) {
-                Restangular.all('posts').getList()
-                    .then(function(posts) {
-                        $scope.posts = posts.map(function(post, index) {
-                            var id = index + 1;
-                            return {
-                                id: id,
-                                title: post.title,
-                                body: $sce.trustAsHtml(post.body),
-                                slug: 'post' + id
-                            };
-                        });
-                    });
+            .controller('mkr.site.posts.list', function($scope, $sce, posts) {
+                $scope.posts = posts.map(function(post, index) {
+                    var id = index + 1;
+                    return {
+                        id: id,
+                        title: post.title,
+                        body: $sce.trustAsHtml(post.body),
+                        slug: 'post' + id
+                    };
+                });
             })
-            .controller('mkr.site.posts.view', function($scope, $sce, $stateParams, Restangular) {
-                Restangular.one('post', $stateParams.id).get()
-                    .then(function(postHtml) { $scope.post = $sce.trustAsHtml(postHtml); });
+            .controller('mkr.site.posts.view', function($scope, $sce, post) {
+                console.log(post);
+                $scope.post = {
+                    title: post.title,
+                    body: $sce.trustAsHtml(post.body)
+                };
             });
     }
 );
