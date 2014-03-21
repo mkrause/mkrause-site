@@ -1,0 +1,7 @@
+
+var path = require('path');
+
+module.exports = {
+    env: 'production',
+    postsDir: path.join(__dirname, '../posts')
+};

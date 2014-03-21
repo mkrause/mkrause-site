@@ -1,12 +1,14 @@
 
 # Tool support
 .vagrant
+npm-debug.log
 
 # Locally installed dependencies
 node_modules
 web/vendor
 
 # Local config
+app/config/params.js
 app/workflow/params.sh
 
 # Build files

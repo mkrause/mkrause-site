@@ -12,11 +12,13 @@ marked.setOptions({
     sanitize: false,
 });
 
+var config = require('../app/config/config.js');
+
 var root = path.join(__dirname, '..');
 
 var app = express();
 
-app.set('port', process.env.PORT || 80);
+app.set('port', process.env.PORT || 8000);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../app/templates'));
 app.set('view engine', 'ejs');
@@ -87,10 +89,7 @@ app.get('/api/posts', function(req, res) {
         // Remove any posts not marked as published
         .invoke('filter', _.matches({ published: true }))
         // Send response
-        .then(function(posts) {
-            res.setHeader("Content-Type", "application/json");
-            res.send(posts);
-        })
+        .then(res.send)
         // Error handling
         .fail(function(reason) {
             console.error(reason);
@@ -137,7 +136,9 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
 
 // Fallback route
 app.get('*', function(req, res) {
-    res.render('default');
+    res.render('default', {
+        env: config.env
+    });
 });
 
 http.createServer(app).listen(app.get('port'));

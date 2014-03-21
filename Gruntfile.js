@@ -7,9 +7,9 @@ module.exports = function(grunt) {
         },
         
         mainJsPath: "web/scripts/main.js",
-        mainJsBuildPath: "web/build/main.js",
+        mainJsBuildPath: "web/build/app.js",
         mainCssPath: "web/style/main.css",
-        mainCssBuildPath: "web/build/main.css",
+        mainCssBuildPath: "web/build/app.css",
         requirejs: {
             js: {
                 options: {
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
                     // paths: ["assets/css"]
                 },
                 files: {
-                    "web/build/main.css": "web/style/main.less"
+                    "web/build/main.css": "web/style/app.less"
                 }
             },
             production: {
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: {
-                    "web/build/main.css": "web/style/main.less"
+                    "web/build/app.css": "web/style/main.less"
                 }
             }
         }

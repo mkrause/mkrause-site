@@ -2,23 +2,33 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="fragment" content="!">
+    
     <title>mkrause</title>
     
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="fragment" content="!">
     
+<% if (env == "production") { %>
+    <link rel="stylesheet" href="build/app.css">
+<% } else { %>
     <link rel="stylesheet/less" href="style/main.less">
     <script src="vendor/less.js/dist/less-1.5.0.js"></script>
+<% } %>
 </head>
 <body>
+    
     <div id="container" ui-view></div>
     
+<% if (env == "production") { %>
+    <script src="build/app.js"></script>
+<% } else { %>
     <script src="vendor/requirejs/require.js"></script>
     <script src="scripts/require_config.js"></script>
     <script>
     // Run main.js (found in the directory specified by the RequireJS baseUrl)
     require(['main']);
     </script>
+<% } %>
 </body>
 </html>
