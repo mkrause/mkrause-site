@@ -56,7 +56,6 @@ define([
                 });
             })
             .controller('mkr.site.posts.view', function($scope, $sce, post) {
-                console.log(post);
                 $scope.post = {
                     title: post.title,
                     body: $sce.trustAsHtml(post.body)
