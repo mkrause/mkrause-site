@@ -1,19 +1,18 @@
 #!/bin/bash
 # Workflow automization tool
 
+# We need to be called with a root directory variable already set
+if [ -z "$root_dir" ]; then
+    echo "Error: root_dir not defined. Don't call this script directly."
+    exit 0
+fi
+
 # Bash configuration
 shopt -s nullglob # Expand globs with zero matches to zero arguments instead of the glob pattern
 shopt -s dotglob # Match dot files
 #shopt -s globstar # Not supported in Bash < 4 :'(
 
 cli_args=("$@") # Save a copy of the CLI arguments so we're free to mangle `$@`
-
-# Get the absolute path for the current script
-# Source: http://stackoverflow.com/questions/59895
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# This needs to refer to the project root (change this if this script is in a subdirectory)
-root_dir="${script_dir}/.."
 
 # Colors
 col_reset="\x1b[39;49;00m"
@@ -103,7 +102,6 @@ cmd_configure() {
     # Install third-party dependencies
     echo -e "${col_green}Installing dependencies...${col_reset}"
     
-    # composer install
     # npm install
     # bower install
     
@@ -111,12 +109,6 @@ cmd_configure() {
 }
 
 cmd_status() {
-    # composer
-    echo -e "${col_green}Checking composer...${col_reset}"
-    # Do a dry run update of composer to see which dependencies may be updated
-    composer update --dry-run | grep -- '- Updating' | sed -E 's/^(.+)- Updating //'
-    echo -e "${col_yellow}To update, run \"composer update\"${col_reset}"
-    
     # npm
     echo -e "${col_green}Checking npm...${col_reset}"
     # Get all outdated packages, filter on lines that look like "[package]@[version]"
@@ -138,9 +130,6 @@ cmd_status() {
 cmd_update() {
     echo -e "${col_green}Updating dependencies.${col_reset}"
     
-    # composer
-    composer update
-    
     # npm
     npm update
     
@@ -160,7 +149,7 @@ cmd_deploy() {
 cmd_sync() {
     host="$config_remote_host"
     username="$config_remote_username"
-    path_local="$root_dir"
+    path_local="${root_dir}/" # Trailing slash so it syncs the directory contents
     path_remote="$config_remote_path"
     
     # Paths to exclude from syncing
@@ -270,13 +259,13 @@ options=()
 parse_options "$@"
 
 # Not installed yet?
-if [ "$cmd" != configure ] && [ ! -f "${script_dir}/workflow_params.sh" ]; then
+if [ "$cmd" != configure ] && [ ! -f "${script_dir}/params.sh" ]; then
     echo -e "${col_red}This app is not yet configured! Run the \"configure\" command.${col_reset}"
     exit 1
 fi
 
 # Import configuration
-. "${script_dir}/workflow_config.sh"
+. "${script_dir}/config.sh"
 
 # Run the specified command
 case "$cmd" in

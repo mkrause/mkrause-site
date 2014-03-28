@@ -3,6 +3,9 @@
     "private": true,
     "version": "0.1.0",
     "main": "src/main.js",
+    "scripts": {
+        "start": "node src/main.js"
+    },
     "dependencies": {
         "q": "~1.0",
         "underscore": "~1.6.0",

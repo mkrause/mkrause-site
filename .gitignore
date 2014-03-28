@@ -1,16 +1,13 @@
 
 # Tool support
 .vagrant
-composer.lock
 
 # Locally installed dependencies
 node_modules
-vendor
 web/vendor
 
 # Local config
-app/workflow_params.sh
-app/config/params.php
+app/workflow/params.sh
 
 # Build files
 web/build

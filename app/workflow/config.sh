@@ -1,6 +1,5 @@
 config_dist_files=(
-    'app/workflow_params.sh.dist'
-    'app/config/params.php.dist'
+    'app/workflow/params.sh.dist'
 )
 
 config_remote_host='mkrause.nl'
@@ -13,6 +12,6 @@ config_open() {
 }
 
 # Import local params
-if [ -f "${script_dir}/workflow_params.sh" ]; then
-    . "${script_dir}/workflow_params.sh"
+if [ -f "${script_dir}/params.sh" ]; then
+    . "${script_dir}/params.sh"
 fi
