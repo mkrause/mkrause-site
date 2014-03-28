@@ -2,12 +2,15 @@
     "name": "mkrause-site",
     "private": true,
     "version": "0.1.0",
-    "scripts": {
-        "start": "node app/server.js"
-    },
+    "main": "src/main.js",
     "dependencies": {
+        "q": "~1.0",
+        "q-io": "~1.11",
         "ngmin": "~0.4",
-        "express": "~3.0"
+        "express": "~3.0",
+        "ejs": "~1.0",
+        "marked": "~0.3",
+        "js-yaml": "~3.0"
     },
     "devDependencies": {
         "grunt": "~0.4",

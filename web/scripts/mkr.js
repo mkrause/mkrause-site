@@ -15,7 +15,7 @@ define([
                 'mkr.site'
             ])
             .config(function(RestangularProvider) {
-                RestangularProvider.setBaseUrl('app.php/api');
+                RestangularProvider.setBaseUrl('/api');
             })
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
