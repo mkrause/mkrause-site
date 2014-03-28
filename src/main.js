@@ -1,6 +1,8 @@
 var http = require('http');
 var path = require('path');
 var express = require('express');
+var _ = require('underscore');
+var q = require('q');
 var fs = require('q-io/fs');
 
 var yaml = require('js-yaml');
@@ -49,42 +51,48 @@ app.use(app.router);
 
 app.get('/api/posts', function(req, res) {
     fs.list(path.join(root, 'app/posts'))
-        .spread(function() {
-            var args = Array.prototype.slice.call(arguments, 0);
-            return args.map(function(fileName) {
-                return fs.read(path.join(root, 'app/posts', fileName));
-            });
+        // Read the contents of each file
+        .invoke('map', function(fileName) {
+            return fs.read(path.join(root, 'app/posts', fileName));
         })
-        .spread(function() {
-            var args = Array.prototype.slice.call(arguments, 0);
-            return args.map(function(fileContents) {
-                var frontMatterRegex = /---\n([\s\S]*)\n---\n/;
-                var matches = fileContents.match(frontMatterRegex);
-                
-                var params = {};
-                if (matches) {
-                    var yamlText = matches[1];
-                    params = yaml.load(yamlText);
-                }
-                
-                params.body = marked(fileContents.replace(frontMatterRegex, ''));
-                
-                return params;
-            })
+        // Wait for all to be resolved
+        .then(q.all)
+        // Parse each file
+        .invoke('map', function(fileContents) {
+            var frontMatterRegex = /---\n([\s\S]*)\n---\n/;
+            var matches = fileContents.match(frontMatterRegex);
+            
+            var post = {};
+            if (matches) {
+                var yamlText = matches[1];
+                post = _.defaults(yaml.load(yamlText), {
+                    title: '(No title)',
+                    date: "0000-00-00",
+                    published: false
+                });
+            }
+            
+            post.body = marked(fileContents.replace(frontMatterRegex, ''));
+            
+            return post;
         })
-        .spread(function() {
-            var args = Array.prototype.slice.call(arguments, 0);
-            var postList = [];
-            
-            console.log(args);
-            
-            args.forEach(function(post) {
-                postList.push(post);
-            });
-            
+        // Remove any posts not marked as published
+        .invoke('filter', function(post) { return post.published; })
+        // Combine all posts
+        .invoke('reduce', function(posts, elmt) {
+            posts.push(elmt);
+            return posts;
+        }, [])
+        // Render as JSON and render
+        .then(JSON.stringify)
+        .then(function(posts) {
             res.setHeader("Content-Type", "application/json");
-            res.send(JSON.stringify(postList));
-        });
+            res.send(posts);
+        })
+        .fail(function(reason) {
+            console.error(reason);
+        })
+        .done();
 });
 
 app.get('*', function(req, res) {

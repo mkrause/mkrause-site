@@ -50,6 +50,7 @@ define([
                     return {
                         id: id,
                         title: post.title,
+                        date: post.date,
                         body: $sce.trustAsHtml(post.body),
                         slug: 'post' + id
                     };
