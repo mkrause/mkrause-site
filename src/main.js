@@ -86,6 +86,10 @@ app.get('/api/posts', function(req, res) {
         .then(q.all)
         // Remove any posts not marked as published
         .invoke('filter', _.matches({ published: true }))
+        // Sort in reverse chronological order
+        .invoke('sort', function(post1, post2) {
+            return Date.parse(post2.date) - Date.parse(post1.date);
+        })
         // Send response
         .then(res.send.bind(res))
         // Error handling
