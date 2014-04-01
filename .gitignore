@@ -1,4 +1,7 @@
 
+# OS support
+.DS_Store
+
 # Tool support
 .vagrant
 npm-debug.log
@@ -8,11 +11,14 @@ node_modules
 web/vendor
 
 # Local config
-app/config/params.js
 app/workflow/params.sh
+app/config/params.js
 
 # Build files
 web/build/*
 
-# Content
+# Temporary files
+app/tmp/*
+
+# Generated (or otherwise locally managed) content
 app/posts/*
