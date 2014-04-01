@@ -23,8 +23,15 @@ module.exports = function(grunt) {
             },
             js_almond: {
                 options: {
-                    almond: true
-                    // TODO
+                    name: "../vendor/almond/almond",
+                    baseUrl: "web/scripts",
+                    include: "main",
+                    mainConfigFile: "web/scripts/require_config.js",
+                    out: "<%= mainJsBuildPath %>",
+                    // Don't optimize yet, we want to run ngmin first
+                    optimize: "none",
+                    wrap: true,
+                    insertRequire: ['main']
                 }
             },
             css: {
@@ -87,7 +94,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     
     // Tasks
-    grunt.registerTask('build:js', ['requirejs:js', 'ngmin', 'uglify']);
+    grunt.registerTask('build:js', ['requirejs:js_almond', 'ngmin', 'uglify']);
     grunt.registerTask('build:css', ['less:production']);
     grunt.registerTask('default', ['build:js', 'build:css']);
 };

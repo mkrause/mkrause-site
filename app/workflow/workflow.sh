@@ -103,9 +103,11 @@ col_cyan="\x1b[36;01m"
 
 echo_color() {
     if [ "$2" = "-n" ]; then
-        echo -en "${1}${3}${col_reset}"
+        text="${@:3}" # Array slice starting from 3
+        echo -en "${1}${text}${col_reset}"
     else
-        echo -e "${1}${2}${col_reset}"
+        text="${@:2}" # Array slice starting from 2
+        echo -e "${1}${text}${col_reset}"
     fi
 }
 
@@ -163,7 +165,7 @@ cmd_update() {
     npm update
     
     # bower
-    (cd "${root_dir}/web" && bower update)
+    (cd "${root_dir}/web" && bower --allow-root update)
 }
 
 cmd_outdated() {
@@ -182,7 +184,7 @@ cmd_outdated() {
     # Have bower generate the list of dependencies, then check for lines indicating a new release
     # (Also, remove the tree display prefix)
     cd "${root_dir}/web"
-    bower list # | grep 'available\|latest' | sed -E 's/^[^a-zA-Z0-9]+//'
+    bower --allow-root list # | grep 'available\|latest' | sed -E 's/^[^a-zA-Z0-9]+//'
     cd "${root_dir}"
     echo_yellow "To update, run \"bower update\""
 }
@@ -208,17 +210,20 @@ cmd_run() {
 }
 
 cmd_deploy() {
-    host="$config_remote_host"
-    username="$config_remote_username"
-    path_remote="$config_remote_path"
+    local host="$config_remote_host"
+    local username="$config_remote_username"
+    local path_remote="$config_remote_path"
     
-    build=1
-    restart_server=1
+    local update=0
+    local build=1
+    local restart_server=1
     
     # Options parsing
     for arg in "$@"; do
         case "$arg" in
             --) break ;; # Use "--" as a signal to stop options processing
+            --update) update=1 ;;
+            --no-update) update=0 ;;
             --build) build=1 ;;
             --no-build) build=0 ;;
             --restart-server) restart_server=1 ;;
@@ -232,45 +237,52 @@ cmd_deploy() {
     
     cmd_sync "$@"
     
+    # Update
+    if [ "$update" = 1 ]; then
+        ssh "${username}@${host}" "cd ${path_remote} && ./wf update"
+    fi
+    
     # Build
     if [ "$build" = 1 ]; then
+        echo_green "Building files..."
         ssh "${username}@${host}" "cd ${path_remote} && grunt"
     fi
     
     # Restart server
     if [ "$restart_server" = 1 ]; then
-        cmd="forever restart main.js"
-        ssh "${username}@${host}" "$cmd"
+        echo_green "Restarting server..."
+        local forever_cmd="forever restart main.js"
+        ssh "${username}@${host}" "$forever_cmd"
     fi
 }
 
 cmd_sync() {
-    host="$config_remote_host"
-    username="$config_remote_username"
-    path_local="${root_dir}/" # Trailing slash so it syncs the directory contents
-    path_remote="$config_remote_path"
+    local host="$config_remote_host"
+    local username="$config_remote_username"
+    local path_local="${root_dir}/" # Trailing slash so it syncs the directory contents
+    local path_remote="$config_remote_path"
     
     # Paths to exclude from syncing
     # Note: all paths are relative to the source directory, and if you don't add a preceding "/"
     # it will match *all* paths with that name
     # http://askubuntu.com/questions/349613
-    excludes="--exclude-from .gitignore --exclude .DS_Store --exclude /.git"
-    includes=""
+    local excludes="--exclude-from .gitignore --exclude .DS_Store --exclude /.git"
+    local includes=""
     
-    options=""
-    restart_server=0
-    dry_run=0
+    local options=""
+    local restart_server=0
+    local dry_run=0
     
     # Options parsing
     for arg in "$@"; do
         case "$arg" in
             --) break ;; # Use "--" as a signal to stop options processing
             --exclude=*)
-                path=${arg#--exclude=} # Remove the prefixed option name
+                local path=${arg#--exclude=} # Remove the prefixed option name
                 excludes="$excludes --exclude $path" # Append the exclude to the list
                 ;;
             --include=*)
-                path=${arg#--include=} # Remove the prefixed option name
+                local path=${arg#--include=} # Remove the prefixed option name
                 includes="$includes --include $path" # Append the include to the list
                 ;;
             --rsync-options=*)
@@ -304,12 +316,12 @@ cmd_sync() {
 }
 
 cmd_edit() {
-    host="$config_remote_host"
-    username="$config_remote_username"
-    path_remote="$config_remote_path"
+    local host="$config_remote_host"
+    local username="$config_remote_username"
+    local path_remote="$config_remote_path"
     
-    restart_server=0
-    custom_path=''
+    local restart_server=0
+    local custom_path=''
     
     # Options parsing
     for arg in "$@"; do
