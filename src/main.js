@@ -18,7 +18,10 @@ var root = path.join(__dirname, '..');
 
 var app = express();
 
-app.set('port', process.env.PORT || 8000);
+// Server port. Can be overridden using the PORT environment variable
+var defaultPort = config.env === 'production' ? 80 : 8000;
+app.set('port', process.env.PORT || defaultPort);
+
 app.set('views', path.join(__dirname, '../app/templates'));
 app.set('view engine', 'ejs');
 
