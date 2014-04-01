@@ -70,7 +70,7 @@ function parsePost(fileName, fileContents) {
     
     // Parse the body of the file using a Markdown parser
     var bodyMarkdown = fileContents.replace(propertiesRegex, '');
-    post.body = marked(bodyMarkdown) + '---';
+    post.body = marked(bodyMarkdown);
     
     return post;
 }
