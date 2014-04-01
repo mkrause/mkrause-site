@@ -1,10 +1,14 @@
 #!/bin/bash
-# Workflow automization tool
+# Workflow automatization tool
+
+# This script expects the following variables to be set:
+# - root_dir        Directory containing the project.
+# - script_dir      Directory containing the workflow script and configuration.
 
 # We need to be called with a root directory variable already set
 if [ -z "$root_dir" ]; then
-    echo "Error: root_dir not defined. Don't call this script directly."
-    exit 0
+    echo "Error: no root directory given."
+    exit 1
 fi
 
 # Bash configuration
@@ -29,10 +33,16 @@ usage: workflow [--help] [--version]
                 <command> [<args>]
 
 Commands:
-configure   Configure a newly created working directory.
-status      Check the state of the project.
-update      Update dependencies.
 open        Open any necessary applications to work on this project (e.g. editor).
+install     Set up a newly created working directory.
+configure   Configure the project.
+update      Update dependencies.
+outdated    Check for any outdated dependencies.
+status      Check the state of the project.
+build       Run build scripts.
+test        Run test scripts.
+run         Run the project.
+deploy      Deploy the project.
 sync        Upload files to a remote server.
 watch       Watch for changes in the project directory, and synchronize automatically.
 edit        Edit files on a remote server.
@@ -43,7 +53,7 @@ show_version() {
     echo "version 0.1"
 }
 
-# Parse command line options (sets: $cmd, $args, $options)
+# Parse command line options (sets: cmd, args, options)
 parse_options() {
     cmd=""
     args=()
@@ -60,10 +70,12 @@ parse_options() {
                 show_version
                 exit 0
                 ;;
+            # Anything that looks like an option
             -*)
                 # Other options may be parsed later
                 options+=($arg)
                 ;;
+            # Anything else (either a command or argument)
             *)
                 if [ -z "$cmd" ]; then
                     cmd=$arg
@@ -76,8 +88,36 @@ parse_options() {
 }
 
 # -----------------
+# Util
+# -----------------
+
+# Verify that a certain tool is installed
+verify_installed() {
+    for cmd in $@; do
+        if ! which $cmd >/dev/null; then
+            echo -en "${col_red}ERROR: This script requires \"$cmd\", which is not currently"
+            echo -e " installed${col_reset}"
+            exit 1
+        fi
+    done
+}
+
+# -----------------
 # Commands
 # -----------------
+
+cmd_open() {
+    # User-defined project open command
+    config_open
+}
+
+cmd_install() {
+    cmd_configure "$@"
+    cmd_update "$@"
+    
+    # Check permissions/owners (e.g. file write permissions)
+    #TODO
+}
 
 cmd_configure() {
     echo -e "${col_green}Configuring local configuration...${col_reset}"
@@ -92,23 +132,29 @@ cmd_configure() {
             continue
         fi
         
-        (set -x; cp "${root_dir}/${src}" "${root_dir}/${dst}")
+        # Copy file
+        (set -x; cp "${root_dir}/${src}" "${root_dir}/${dst}") # Subshell with debug mode
+        
+        # Allow the user to edit the newly copied file
         vim "${root_dir}/${dst}"
     done
-    
-    # Check permissions/owners (writables, executables, etc.)
-    #TODO
-    
-    # Install third-party dependencies
-    echo -e "${col_green}Installing dependencies...${col_reset}"
-    
-    # npm install
-    # bower install
-    
-    echo -e "${col_green}Done.${col_reset}"
 }
 
-cmd_status() {
+cmd_update() {
+    verify_installed npm bower
+    
+    echo -e "${col_green}Updating dependencies.${col_reset}"
+    
+    # npm
+    npm update
+    
+    # bower
+    (cd "${root_dir}/web" && bower update)
+}
+
+cmd_outdated() {
+    verify_installed npm bower
+    
     # npm
     echo -e "${col_green}Checking npm...${col_reset}"
     # Get all outdated packages, filter on lines that look like "[package]@[version]"
@@ -127,18 +173,24 @@ cmd_status() {
     echo -e "${col_yellow}To update, run \"bower update\"${col_reset}"
 }
 
-cmd_update() {
-    echo -e "${col_green}Updating dependencies.${col_reset}"
-    
-    # npm
-    npm update
-    
-    # bower
-    cd "${root_dir}/web"
-    bower update
-    cd "${root_dir}"
-    
-    echo -e "${col_green}Done.${col_reset}"
+cmd_status() {
+    verify_installed git
+    git status
+}
+
+cmd_build() {
+    verify_installed grunt
+    grunt
+}
+
+cmd_test() {
+    #...
+    return
+}
+
+cmd_run() {
+    verify_installed npm
+    npm start
 }
 
 cmd_deploy() {
@@ -203,8 +255,6 @@ cmd_sync() {
     fi
     
     #TODO: provide a way to actually install the project if it hasn't been installed yet?
-    
-    echo -e "${col_green}Done.${col_reset}"
 }
 
 cmd_edit() {
@@ -233,8 +283,6 @@ cmd_edit() {
         echo -e "${col_green}Restarting server...${col_reset}"
         ssh "${username}@${host}" "/etc/init.d/apache2 restart"
     fi
-    
-    echo -e "${col_green}Done.${col_reset}"
 }
 
 cmd_watch() {
@@ -243,12 +291,7 @@ cmd_watch() {
     # https://github.com/alandipert/fswatch (OS X)
     # https://github.com/axkibe/lsyncd
     
-    fswatch . "${script_dir}/workflow sync"
-}
-
-cmd_open() {
-    # User-defined project open command
-    config_open
+    verify_installed fswatch && fswatch . "${script_dir}/workflow sync"
 }
 
 
@@ -258,25 +301,43 @@ args=()
 options=()
 parse_options "$@"
 
-# Not installed yet?
-if [ "$cmd" != configure ] && [ ! -f "${script_dir}/params.sh" ]; then
-    echo -e "${col_red}This app is not yet configured! Run the \"configure\" command.${col_reset}"
-    exit 1
-fi
-
 # Import configuration
 . "${script_dir}/config.sh"
 
+# Not installed yet?
+if [ "$cmd" != "install" ] && [ ! -f "${script_dir}/params.sh" ]; then
+    echo -e "${col_red}This app is not yet installed! Run the \"install\" command.${col_reset}"
+    exit 1
+fi
+
 # Run the specified command
 case "$cmd" in
-    configure) cmd_configure "${args[@]}" "${options[@]}" ;;
-    status) cmd_status "${args[@]}" "${options[@]}" ;;
-    update) cmd_update "${args[@]}" "${options[@]}" ;;
-    deploy) cmd_deploy "${args[@]}" "${options[@]}" ;;
-    sync) cmd_sync "${args[@]}" "${options[@]}" ;;
-    edit) cmd_edit "${args[@]}" "${options[@]}" ;;
-    watch) cmd_watch "${args[@]}" "${options[@]}" ;;
-    open) cmd_open "${args[@]}" "${options[@]}" ;;
+    open)
+        cmd_open "${args[@]}" "${options[@]}" ;;
+    install)
+        cmd_install "${args[@]}" "${options[@]}" ;;
+    configure)
+        cmd_configure "${args[@]}" "${options[@]}" ;;
+    update)
+        cmd_update "${args[@]}" "${options[@]}" ;;
+    outdated)
+        cmd_outdated "${args[@]}" "${options[@]}" ;;
+    status)
+        cmd_status "${args[@]}" "${options[@]}" ;;
+    build)
+        cmd_build "${args[@]}" "${options[@]}" ;;
+    test)
+        cmd_test "${args[@]}" "${options[@]}" ;;
+    run)
+        cmd_run "${args[@]}" "${options[@]}" ;;
+    deploy)
+        cmd_deploy "${args[@]}" "${options[@]}" ;;
+    sync)
+        cmd_sync "${args[@]}" "${options[@]}" ;;
+    edit)
+        cmd_edit "${args[@]}" "${options[@]}" ;;
+    watch)
+        cmd_watch "${args[@]}" "${options[@]}" ;;
     ?*) # Fallback (non-empty string)
         echo "Unrecognized command \"$cmd\""
         exit 1
@@ -286,3 +347,5 @@ case "$cmd" in
         exit 0
         ;;
 esac
+
+echo -e "${col_green}Done.${col_reset}"

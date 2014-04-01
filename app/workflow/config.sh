@@ -1,5 +1,8 @@
+
+# Distribution files that need to be copied and modified locally
 config_dist_files=(
     'app/workflow/params.sh.dist'
+    'app/config/params.js.dist'
 )
 
 config_remote_host='mkrause.nl'
