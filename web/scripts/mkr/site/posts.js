@@ -18,9 +18,11 @@ define([
                         controller: "mkr.site.posts.list",
                         templateUrl: "templates/mkr/posts.html",
                         resolve: {
-                            posts: function(Restangular) {
-                                return Restangular.all('posts').getList();
-                            }
+                            posts: ['Restangular',
+                                function(Restangular) {
+                                    return Restangular.all('posts').getList();
+                                }
+                            ]
                         }
                     })
                     .state('mkr.site.posts.view', {
@@ -28,9 +30,11 @@ define([
                         controller: "mkr.site.posts.view",
                         templateUrl: "templates/mkr/post_view.html",
                         resolve: {
-                            post: function(Restangular, $stateParams) {
-                                return Restangular.one('posts', $stateParams.id).get();
-                            }
+                            post: ['Restangular', '$stateParams',
+                                function(Restangular, $stateParams) {
+                                    return Restangular.one('posts', $stateParams.id).get();
+                                }
+                            ]
                         }
                     })
                     .state('mkr.site.posts.post_with_slug', {
@@ -38,9 +42,11 @@ define([
                         controller: "mkr.site.posts.view",
                         templateUrl: "templates/mkr/post_view.html",
                         resolve: {
-                            post: function(Restangular, $stateParams) {
-                                return Restangular.one('posts', $stateParams.id).get();
-                            }
+                            post: ['Restangular', '$stateParams',
+                                function(Restangular, $stateParams) {
+                                    return Restangular.one('posts', $stateParams.id).get();
+                                }
+                            ]
                         }
                     });
             })
