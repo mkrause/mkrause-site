@@ -232,8 +232,7 @@ cmd_deploy() {
     done
     
     # Start server (only when not already started)
-    # cmd="forever --sourceDir ${path_remote}/src --watchDirectory ${path_remote}/src \
-        # -o /tmp/out.log start main.js"
+    # cmd="forever -m 1 --sourceDir ${path_remote}/src --watchDirectory ${path_remote}/src -o /tmp/out.log -e /tmp/error.log start main.js"
     
     cmd_sync "$@"
     
