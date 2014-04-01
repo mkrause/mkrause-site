@@ -270,7 +270,6 @@ cmd_sync() {
     local includes=""
     
     local options=""
-    local restart_server=0
     local dry_run=0
     
     # Options parsing
@@ -289,7 +288,6 @@ cmd_sync() {
                 rsync_options=${arg#--rsync-options=}
                 options="$options $rsync_options"
                 ;;
-            --restart-server) restart_server=1 ;;
             --dry-run) dry_run=1; options="$options --dry-run" ;;
         esac
     done
@@ -306,11 +304,6 @@ cmd_sync() {
     rsync -rvtpl "${path_local}" "${username}@${host}:${path_remote}"\
         $includes $excludes $options --delete
     { set +x; } 2>/dev/null # Quietly disable set -x
-    
-    if [ "$restart_server" = 1 ]; then
-        echo_green "Restarting server..."
-        ssh "${username}@${host}" "/etc/init.d/apache2 restart"
-    fi
     
     #TODO: provide a way to actually install the project if it hasn't been installed yet?
 }
