@@ -18,15 +18,6 @@ shopt -s dotglob # Match dot files
 
 cli_args=("$@") # Save a copy of the CLI arguments so we're free to mangle `$@`
 
-# Colors
-col_reset="\x1b[39;49;00m"
-col_red="\x1b[31;01m"
-col_green="\x1b[32;01m"
-col_yellow="\x1b[33;01m"
-col_blue="\x1b[34;01m"
-col_magenta="\x1b[35;01m"
-col_cyan="\x1b[36;01m"
-
 show_help() {
     cat <<'EOT'
 usage: workflow [--help] [--version]
@@ -95,12 +86,35 @@ parse_options() {
 verify_installed() {
     for cmd in $@; do
         if ! which $cmd >/dev/null; then
-            echo -en "${col_red}ERROR: This script requires \"$cmd\", which is not currently"
-            echo -e " installed${col_reset}"
+            echo_red "ERROR: This script requires \"$cmd\", which is not currently installed"
             exit 1
         fi
     done
 }
+
+# Colors
+col_reset="\x1b[39;49;00m"
+col_red="\x1b[31;01m"
+col_green="\x1b[32;01m"
+col_yellow="\x1b[33;01m"
+col_blue="\x1b[34;01m"
+col_magenta="\x1b[35;01m"
+col_cyan="\x1b[36;01m"
+
+echo_color() {
+    if [ "$2" = "-n" ]; then
+        echo -en "${1}${3}${col_reset}"
+    else
+        echo -e "${1}${2}${col_reset}"
+    fi
+}
+
+echo_red() { echo_color $col_red $@; }
+echo_green() { echo_color $col_green $@; }
+echo_yellow() { echo_color $col_yellow $@; }
+echo_blue() { echo_color $col_blue $@; }
+echo_magenta() { echo_color $col_magenta $@; }
+echo_cyan() { echo_color $col_cyan $@; }
 
 # -----------------
 # Commands
@@ -120,7 +134,7 @@ cmd_install() {
 }
 
 cmd_configure() {
-    echo -e "${col_green}Configuring local configuration...${col_reset}"
+    echo_green "Configuring local configuration..."
     
     for dist_file in "${config_dist_files[@]}"; do
         src="$dist_file"
@@ -143,7 +157,7 @@ cmd_configure() {
 cmd_update() {
     verify_installed npm bower
     
-    echo -e "${col_green}Updating dependencies.${col_reset}"
+    echo_green "Updating dependencies."
     
     # npm
     npm update
@@ -156,21 +170,21 @@ cmd_outdated() {
     verify_installed npm bower
     
     # npm
-    echo -e "${col_green}Checking npm...${col_reset}"
+    echo_green "Checking npm..."
     # Get all outdated packages, filter on lines that look like "[package]@[version]"
     npm outdated | grep -E '^[^ ]+@[^ ]+'
     # Note: older versions of npm don't include devDependencies in "npm outdated":
     # https://github.com/npm/npm/issues/3250
-    echo -e "${col_yellow}To update, run \"npm update\"${col_reset}"
+    echo_yellow "To update, run \"npm update\""
     
     # bower
-    echo -e "${col_green}Checking bower...${col_reset}"
+    echo_green "Checking bower..."
     # Have bower generate the list of dependencies, then check for lines indicating a new release
     # (Also, remove the tree display prefix)
     cd "${root_dir}/web"
     bower list # | grep 'available\|latest' | sed -E 's/^[^a-zA-Z0-9]+//'
     cd "${root_dir}"
-    echo -e "${col_yellow}To update, run \"bower update\"${col_reset}"
+    echo_yellow "To update, run \"bower update\""
 }
 
 cmd_status() {
@@ -198,11 +212,36 @@ cmd_deploy() {
     username="$config_remote_username"
     path_remote="$config_remote_path"
     
+    build=1
+    restart_server=1
+    
+    # Options parsing
+    for arg in "$@"; do
+        case "$arg" in
+            --) break ;; # Use "--" as a signal to stop options processing
+            --build) build=1 ;;
+            --no-build) build=0 ;;
+            --restart-server) restart_server=1 ;;
+            --no-restart-server) restart_server=0 ;;
+        esac
+    done
+    
+    # Start server (only when not already started)
     # cmd="forever --sourceDir ${path_remote}/src --watchDirectory ${path_remote}/src \
         # -o /tmp/out.log start main.js"
     
-    cmd="forever restart main.js"
-    ssh "${username}@${host}" "$cmd"
+    cmd_sync "$@"
+    
+    # Build
+    if [ "$build" = 1 ]; then
+        ssh "${username}@${host}" "cd ${path_remote} && grunt"
+    fi
+    
+    # Restart server
+    if [ "$restart_server" = 1 ]; then
+        cmd="forever restart main.js"
+        ssh "${username}@${host}" "$cmd"
+    fi
 }
 
 cmd_sync() {
@@ -215,7 +254,7 @@ cmd_sync() {
     # Note: all paths are relative to the source directory, and if you don't add a preceding "/"
     # it will match *all* paths with that name
     # http://askubuntu.com/questions/349613
-    excludes="--exclude-from .gitignore --exclude=.DS_Store --exclude /.git"
+    excludes="--exclude-from .gitignore --exclude .DS_Store --exclude /.git"
     includes=""
     
     options=""
@@ -243,10 +282,10 @@ cmd_sync() {
         esac
     done
     
-    echo -e "${col_green}Synchronizing files...${col_reset}"
+    echo_green "Synchronizing files..."
     
     if [ "$dry_run" = 1 ]; then
-        echo -e "${col_yellow}(Dry run)${col_reset}"
+        echo_yellow "(Dry run)"
     fi
     
     # Sync files
@@ -257,7 +296,7 @@ cmd_sync() {
     { set +x; } 2>/dev/null # Quietly disable set -x
     
     if [ "$restart_server" = 1 ]; then
-        echo -e "${col_green}Restarting server...${col_reset}"
+        echo_green "Restarting server..."
         ssh "${username}@${host}" "/etc/init.d/apache2 restart"
     fi
     
@@ -287,7 +326,7 @@ cmd_edit() {
     fi
     
     if [ "$restart_server" = 1 ]; then
-        echo -e "${col_green}Restarting server...${col_reset}"
+        echo_green "Restarting server..."
         ssh "${username}@${host}" "/etc/init.d/apache2 restart"
     fi
 }
@@ -313,7 +352,7 @@ parse_options "$@"
 
 # Not installed yet?
 if [ "$cmd" != "install" ] && [ ! -f "${script_dir}/params.sh" ]; then
-    echo -e "${col_red}This app is not yet installed! Run the \"install\" command.${col_reset}"
+    echo_red "This app is not yet installed! Run the \"install\" command."
     exit 1
 fi
 
@@ -355,4 +394,4 @@ case "$cmd" in
         ;;
 esac
 
-echo -e "${col_green}Done.${col_reset}"
+echo_green "Done."
