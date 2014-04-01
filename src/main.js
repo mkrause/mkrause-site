@@ -70,7 +70,7 @@ function parsePost(fileName, fileContents) {
     
     // Parse the body of the file using a Markdown parser
     var bodyMarkdown = fileContents.replace(propertiesRegex, '');
-    post.body = marked(bodyMarkdown);
+    post.body = marked(bodyMarkdown) + '---';
     
     return post;
 }
@@ -86,7 +86,7 @@ app.get('/api/posts', function(req, res) {
             return fs.read(filePath).then(parseFn);
         })
         // Wait for everything to be resolved
-        .then(q.all)
+        .all()
         // Remove any posts not marked as published
         .invoke('filter', _.matches({ published: true }))
         // Sort in reverse chronological order
