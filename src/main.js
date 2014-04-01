@@ -65,7 +65,8 @@ function parsePost(fileName, fileContents) {
         title: null,
         slug: null,
         date: null,
-        published: false
+        published: false,
+        body: null
     });
     
     // Parse the body of the file using a Markdown parser
@@ -77,6 +78,10 @@ function parsePost(fileName, fileContents) {
 
 app.get('/api/posts', function(req, res) {
     fs.list(config.postsDir)
+        // Filter out anything that doesn't look like a post
+        .invoke('filter', function(fileName) {
+            return /\.md$/.test(fileName);
+        })
         // For each file, read the contents and parse it to a JSON representation
         .invoke('map', function(fileName) {
             var filePath = path.join(config.postsDir, fileName);
