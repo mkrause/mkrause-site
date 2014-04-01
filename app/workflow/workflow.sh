@@ -194,8 +194,15 @@ cmd_run() {
 }
 
 cmd_deploy() {
-    #...
-    return
+    host="$config_remote_host"
+    username="$config_remote_username"
+    path_remote="$config_remote_path"
+    
+    # cmd="forever --sourceDir ${path_remote}/src --watchDirectory ${path_remote}/src \
+        # -o /tmp/out.log start main.js"
+    
+    cmd="forever restart main.js"
+    ssh "${username}@${host}" "$cmd"
 }
 
 cmd_sync() {
@@ -291,7 +298,7 @@ cmd_watch() {
     # https://github.com/alandipert/fswatch (OS X)
     # https://github.com/axkibe/lsyncd
     
-    verify_installed fswatch && fswatch . "${script_dir}/workflow sync"
+    verify_installed fswatch && fswatch . "${root_dir}/wf sync"
 }
 
 
