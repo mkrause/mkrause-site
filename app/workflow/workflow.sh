@@ -138,21 +138,36 @@ cmd_install() {
 cmd_configure() {
     echo_green "Configuring local configuration..."
     
+    local force=0
+    
+    # Options parsing
+    for arg in "$@"; do
+        case "$arg" in
+            --) break ;; # Use "--" as a signal to stop options processing
+            --force) force=1 ;;
+        esac
+    done
+    
     for dist_file in "${config_dist_files[@]}"; do
         src="$dist_file"
         dst="${dist_file%.dist}" # Remove .dist extension
         
-        # Skip if already exists
         if [ -f "${root_dir}/${dst}" ]; then
-            echo "Skipping $dst (already exists)"
-            continue
+            # Skip if already exists
+            echo "Already exists: $dst"
+            
+            # Skip the rest of configuration command, unless we're using --force
+            if [ "$force" = 0 ]; then
+                continue
+            fi
+        else
+            # Copy file
+            echo "Copying from .dist: $dst"
+            (set -x; cp "${root_dir}/${src}" "${root_dir}/${dst}") # Subshell with debug mode
         fi
         
-        # Copy file
-        (set -x; cp "${root_dir}/${src}" "${root_dir}/${dst}") # Subshell with debug mode
-        
         # Allow the user to edit the newly copied file
-        vim "${root_dir}/${dst}"
+        subl -wn "${root_dir}/${dst}"
     done
 }
 
