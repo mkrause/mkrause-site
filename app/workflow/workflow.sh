@@ -215,8 +215,8 @@ cmd_deploy() {
     local path_remote="$config_remote_path"
     
     local update=0
-    local build=1
-    local restart_server=1
+    local build=0
+    local restart_server=0
     
     # Options parsing
     for arg in "$@"; do
@@ -232,7 +232,7 @@ cmd_deploy() {
     done
     
     # Start server (only when not already started)
-    # cmd="forever -m 1 --sourceDir ${path_remote}/src --watchDirectory ${path_remote}/src -o /tmp/out.log -e /tmp/error.log start main.js"
+    # cmd="forever -m 1 --sourceDir ${path_remote}/src --watch --watchDirectory ${path_remote}/src -o /tmp/out.log -e /tmp/error.log start main.js"
     
     cmd_sync "$@"
     
@@ -341,7 +341,7 @@ cmd_watch() {
     # https://github.com/alandipert/fswatch (OS X)
     # https://github.com/axkibe/lsyncd
     
-    verify_installed fswatch && fswatch . "${root_dir}/wf sync"
+    verify_installed fswatch && fswatch . "${root_dir}/wf deploy $@"
 }
 
 
