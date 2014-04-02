@@ -111,6 +111,10 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
     var id = req.route.params.id;
     
     fs.list(config.postsDir)
+        // Filter out anything that doesn't look like a post
+        .invoke('filter', function(fileName) {
+            return /\.md$/.test(fileName);
+        })
         // Filter out only those posts that match the given ID (should be one or zero)
         .invoke('filter', function(fileName) {
             var matches = fileName.match(/^\d+_([^_]+)_/);
