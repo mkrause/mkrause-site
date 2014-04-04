@@ -1,22 +1,27 @@
-@import url("../vendor/bootstrap/dist/css/bootstrap.css");
-@import url("../vendor/bootstrap/dist/css/bootstrap-theme.css");
-@import url("../vendor/font-awesome/css/font-awesome.min.css");
+
+/* Bootstrap */
+@import url("../vendor/bootstrap/less/bootstrap.less");
+/*@import url("../vendor/bootstrap/less/theme.less");*/
+
+/* Font awesome */
+@import url("../vendor/font-awesome/less/font-awesome.less");
+@fa-font-path: "/vendor/font-awesome/fonts";
 
 /* Fonts */
 @font-face {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 300;
-    src: local('Lato Light'), local('Lato-Light'),
-        url('../fonts/lato_300.woff') format('woff');
+    src: local("Lato Light"), local("Lato-Light"),
+        url("../fonts/lato_300.woff") format("woff");
 }
 
 @font-face {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
-    src: local('Lato Regular'), local('Lato-Regular'),
-        url('../fonts/lato_400.woff') format('woff');
+    src: local("Lato Regular"), local("Lato-Regular"),
+        url("../fonts/lato_400.woff") format("woff");
 }
 
 /* Animations */
@@ -49,21 +54,22 @@ html, body {
     font-weight: 300;
 }
 
-html {
-    height: 100%;
-    background-color: #485A6E;
-    /*background: linear-gradient(top, #354352, #485A6E);*/
-    background: linear-gradient(to bottom, #242E38, #485A6E) #485A6E;
-    background-attachment: fixed; 
-    background-repeat: repeat-x;
-}
-
 body {
-    background: none;
+    background: #485A6E; /* Fallback */
+    background: linear-gradient(to bottom, #242E38, #485A6E) repeat-x fixed #485A6E;
+    color: white;
 }
 
 a:link, a:hover {
     text-decoration: none;
+}
+
+a {
+    color: #93C0E6;
+}
+
+a:hover {
+    color: #7F9FBA;
 }
 
 @import url("mkr.less");

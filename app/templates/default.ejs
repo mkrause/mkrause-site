@@ -7,7 +7,7 @@
     <title>mkrause</title>
     
     <base href="/">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
 <% if (env === "production") { %>
     <link rel="stylesheet" href="build/app.css">
@@ -19,7 +19,7 @@
 </head>
 <body>
     
-    <div id="container" ui-view></div>
+    <div ui-view></div>
     
 <% if (env === "development") { %>
     <script src="vendor/requirejs/require.js"></script>
