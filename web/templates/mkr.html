@@ -1,6 +1,19 @@
 <div class="mkr container">
     <div class="content row ease-in">
-        <div class="me col-sm-4 hidden-xs">
+        
+        <!-- Top bar, for extra small screens -->
+        <div class="me me-top visible-xs col-sm-4">
+            <h1>mkrause</h1>
+            
+            <ul class="me-menu clearfix">
+                <li ui-sref-active="active"><a ui-sref="mkr.site.posts.list">posts</a></li>
+                <li ui-sref-active="active"><a ui-sref="mkr.site.about">about</a></li>
+                <!-- <li ui-sref-active="active"><a href="#">slides</a></li> -->
+            </ul>
+        </div>
+        
+        <!-- Sidebar, for anything higher than extra small screens -->
+        <div class="me me-side hidden-xs col-sm-4 col-lg-3">
             <div class="me-links">
                 <a href="http://github.com/mkrause" target="_blank">
                     <i class="fa fa-github-square"></i>
@@ -22,16 +35,7 @@
             </ul>
         </div>
         
-        <div class="me me-top col-sm-4 visible-xs">
-            <h1>mkrause</h1>
-            
-            <ul class="me-menu clearfix">
-                <li ui-sref-active="active"><a ui-sref="mkr.site.posts.list">posts</a></li>
-                <li ui-sref-active="active"><a ui-sref="mkr.site.about">about</a></li>
-                <!-- <li ui-sref-active="active"><a href="#">slides</a></li> -->
-            </ul>
-        </div>
-        
-        <div ui-view class="col-sm-8"></div>
+        <!-- Content, on the right for small and medium, centered for large -->
+        <div ui-view class="col-sm-8 col-lg-7"></div>
     </div>
 </div>
