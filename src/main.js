@@ -2,8 +2,8 @@ var http = require('http');
 var path = require('path');
 var express = require('express');
 var _ = require('underscore');
-var q = require('q');
-var fs = require('q-io/fs');
+var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs'));
 
 var yaml = require('js-yaml');
 var marked = require('marked');
@@ -39,7 +39,8 @@ app.use(app.router);
 // Routes
 
 // Parse a post definition file
-function parsePost(fileName, fileContents) {
+function parsePost(fileName, fileBuffer) {
+    var fileContents = fileBuffer.toString();
     var properties = {};
     var propertiesRegex = /---\n([\s\S]*)\n---\n/;
     var propertiesMatches = fileContents.match(propertiesRegex);
@@ -77,32 +78,30 @@ function parsePost(fileName, fileContents) {
 }
 
 app.get('/api/posts', function(req, res) {
-    fs.list(config.postsDir)
+    fs.readdirAsync(config.postsDir)
         // Filter out anything that doesn't look like a post
-        .invoke('filter', function(fileName) {
+        .filter(function(fileName) {
             return /\.md$/.test(fileName);
         })
         // For each file, read the contents and parse it to a JSON representation
-        .invoke('map', function(fileName) {
+        .map(function(fileName) {
             var filePath = path.join(config.postsDir, fileName);
             var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
             
             // Read the file and parse it
-            return fs.read(filePath).then(parseFn);
+            return fs.readFileAsync(filePath).then(parseFn);
         })
-        // Wait for everything to be resolved
-        .all()
         // Remove any posts not marked as published
-        .invoke('filter', _.matches({ published: true }))
+        .filter(_.matches({ published: true }))
         // Sort in reverse chronological order
-        .invoke('sort', function(post1, post2) {
+        .call('sort', function(post1, post2) {
             return Date.parse(post2.date) - Date.parse(post1.date);
         })
         // Send response
         .then(res.send.bind(res))
         // Error handling
-        .fail(function(reason) {
-            console.error(reason);
+        .catch(function(reason) {
+            console.error(reason, reason.stack);
             res.send("Server error, unable to load posts", 500);
         });
 });
@@ -110,13 +109,13 @@ app.get('/api/posts', function(req, res) {
 app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
     var id = req.route.params.id;
     
-    fs.list(config.postsDir)
+    fs.readdirAsync(config.postsDir)
         // Filter out anything that doesn't look like a post
-        .invoke('filter', function(fileName) {
+        .filter(function(fileName) {
             return /\.md$/.test(fileName);
         })
         // Filter out only those posts that match the given ID (should be one or zero)
-        .invoke('filter', function(fileName) {
+        .filter(function(fileName) {
             var matches = fileName.match(/^\d+_([^_]+)_/);
             var postId = matches[1];
             return postId === id;
@@ -132,16 +131,16 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
             
             var filePath = path.join(config.postsDir, fileName);
             var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
-            return fs.read(filePath).then(parseFn);
+            return fs.readFileAsync(filePath).then(parseFn);
         })
         // Send response
         .then(res.send.bind(res))
         // Error handling
-        .fail(function(reason) {
+        .caught(function(reason) {
             if (reason === 404) {
                 res.send("Post not found", 404);
             } else {
-                console.error(reason);
+                console.error(reason, reason.stack);
                 res.send("Server error", 500);
             }
         });
