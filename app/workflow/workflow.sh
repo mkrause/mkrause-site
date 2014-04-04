@@ -24,7 +24,6 @@ usage: workflow [--help] [--version]
                 <command> [<args>]
 
 Commands:
-open        Open any necessary applications to work on this project (e.g. editor).
 install     Set up a newly created working directory.
 configure   Configure the project.
 update      Update dependencies.
@@ -121,11 +120,6 @@ echo_cyan() { echo_color $col_cyan $@; }
 # -----------------
 # Commands
 # -----------------
-
-cmd_open() {
-    # User-defined project open command
-    config_open
-}
 
 cmd_install() {
     cmd_configure "$@"
@@ -377,8 +371,6 @@ fi
 
 # Run the specified command
 case "$cmd" in
-    open)
-        cmd_open "${args[@]}" "${options[@]}" ;;
     install)
         cmd_install "${args[@]}" "${options[@]}" ;;
     configure)
