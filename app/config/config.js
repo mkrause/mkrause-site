@@ -4,5 +4,7 @@ var path = require('path');
 
 module.exports = {
     env: params.env,
-    postsDir: params.postsDir
+    postsDir: params.postsDir,
+    secret: params.secret,
+    accounts: params.accounts
 };

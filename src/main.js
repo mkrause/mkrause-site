@@ -4,9 +4,10 @@ var express = require('express');
 var _ = require('underscore');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
-
 var yaml = require('js-yaml');
 var marked = require('marked');
+var jwt = Promise.promisifyAll(require('jsonwebtoken'));
+var passLib = Promise.promisifyAll(require('./pass'));
 
 marked.setOptions({
     // sanitize: false
@@ -77,6 +78,61 @@ function parsePost(fileName, fileBuffer) {
     return post;
 }
 
+app.get('/api/authenticate', function(req, res) {
+    var profile = {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john@doe.com',
+        id: 123
+    };
+    
+    // We are sending the profile inside the token
+    var token = jwt.sign(profile, config.secret, { expiresInMinutes: -1 });
+    
+    jwt.verifyAsync(token, config.secret)
+        .then(res.json.bind(res))
+        .catch(function(reason) {
+            console.error(reason);
+            res.send("Authentication failed");
+        });
+    
+    // res.json({ token: token });
+});
+
+app.post('/api/authenticate', function(req, res) {
+    var email = req.body.email;
+    var password = req.body.password;
+    
+    var sendFailureResponse = function() {
+        res.send("Authentication failed", 401);
+    };
+    
+    console.log(email);
+    console.log(email in config.accounts);
+    
+    if (!(email in config.accounts)) {
+        sendFailureResponse();
+        return;
+    }
+    
+    var account = config.accounts[email];
+    passLib.comparePasswordAsync(password, account.passHash)
+        .then(function() {
+            // The session data
+            var sessData = {
+                _token: token,
+                email: account.email,
+                name: account.name
+            };
+            
+            var token = jwt.sign(sessData, config.secret, { expiresInMinutes: 24 * 60 });
+            sessData['_token'] = token;
+            
+            res.json({ user: sessData });
+        })
+        .catch(sendFailureResponse);
+});
+
 app.get('/api/posts', function(req, res) {
     fs.readdirAsync(config.postsDir)
         // Filter out anything that doesn't look like a post
@@ -98,7 +154,7 @@ app.get('/api/posts', function(req, res) {
             return Date.parse(post2.date) - Date.parse(post1.date);
         })
         // Send response
-        .then(res.send.bind(res))
+        .then(res.json.bind(res))
         // Error handling
         .catch(function(reason) {
             console.error(reason, reason.stack);
@@ -134,7 +190,7 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
             return fs.readFileAsync(filePath).then(parseFn);
         })
         // Send response
-        .then(res.send.bind(res))
+        .then(res.json.bind(res))
         // Error handling
         .caught(function(reason) {
             if (reason === 404) {

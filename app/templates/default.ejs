@@ -14,6 +14,12 @@
     <script src="build/app.js" async></script>
 <% } else { %>
     <link rel="stylesheet/less" href="style/main.less">
+    <script>
+    less = {
+        env: "development",
+        logLevel: 1 // Only log errors
+    };
+    </script>
     <script src="vendor/less.js/dist/less-1.5.0.js"></script>
 <% } %>
 </head>

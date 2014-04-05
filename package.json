@@ -13,6 +13,8 @@
         "ejs": "~1.0",
         "marked": "~0.3",
         "js-yaml": "~3.0",
+        "bcrypt": "~0.7.7",
+        "jsonwebtoken": "~0.2.0",
         "ngmin": "~0.4"
     },
     "devDependencies": {

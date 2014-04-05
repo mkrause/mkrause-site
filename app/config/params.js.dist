@@ -3,5 +3,7 @@ var path = require('path');
 
 module.exports = {
     env: 'production',
-    postsDir: path.join(__dirname, '../posts')
+    postsDir: path.join(__dirname, '../posts'),
+    secret: 'super-secret' // Replace this with some strong random string,
+    accounts: {}
 };
