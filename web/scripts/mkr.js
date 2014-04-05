@@ -86,7 +86,6 @@ define([
                             $state.transitionTo('mkr.admin.index');
                         })
                         .catch(function(reason) {
-                            console.error(reason);
                             $scope.message = "Login failed";
                         });
                 };

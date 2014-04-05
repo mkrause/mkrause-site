@@ -44,15 +44,6 @@ define([
                 this.hasAuthUser = function() {
                     return this.getAuthUser() !== null;
                 };
-            })
-            .run(function(Restangular, $window) {
-                if ($window.sessionStorage.token) {
-                    var user = JSON.parse($window.sessionStorage.getItem('user'));
-                    var token = user._token;
-                    Restangular.setDefaultHeaders({
-                        "Authenticate": "Bearer " + token
-                    });
-                }
             });
     }
 );
