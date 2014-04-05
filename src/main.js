@@ -26,6 +26,7 @@ app.set('port', process.env.PORT || defaultPort);
 app.set('views', path.join(__dirname, '../app/templates'));
 app.set('view engine', 'ejs');
 
+app.disable('x-powered-by'); // Disable `X-Powered-By` header
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride()); // Allow HTTP method override using a `_method` param
