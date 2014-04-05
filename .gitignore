@@ -22,3 +22,4 @@ app/tmp
 
 # Generated (or otherwise locally managed) content
 app/posts
+web/content
