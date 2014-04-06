@@ -353,6 +353,11 @@ cmd_watch() {
     verify_installed fswatch && fswatch . "${root_dir}/wf deploy $@"
 }
 
+cmd_self_update() {
+    # TODO: get the latest version of this script
+    return
+}
+
 
 # Parse command line options
 cmd=""
