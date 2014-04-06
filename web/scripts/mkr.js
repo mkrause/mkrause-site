@@ -88,6 +88,9 @@ define([
                         .catch(function(reason) {
                             $scope.message = "Login failed";
                         });
+                    
+                    // Prevent form submission
+                    return false;
                 };
             })
             .controller('mkr.logout', function($state, auth) {
