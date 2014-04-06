@@ -79,27 +79,6 @@ function parsePost(fileName, fileBuffer) {
     return post;
 }
 
-app.get('/api/authenticate', function(req, res) {
-    var profile = {
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john@doe.com',
-        id: 123
-    };
-    
-    // We are sending the profile inside the token
-    var token = jwt.sign(profile, config.secret, { expiresInMinutes: -1 });
-    
-    jwt.verifyAsync(token, config.secret)
-        .then(res.json.bind(res))
-        .catch(function(reason) {
-            console.error(reason);
-            res.send("Authentication failed");
-        });
-    
-    // res.json({ token: token });
-});
-
 app.post('/api/authenticate', function(req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -107,9 +86,6 @@ app.post('/api/authenticate', function(req, res) {
     var sendFailureResponse = function() {
         res.send("Authentication failed", 401);
     };
-    
-    console.log(email);
-    console.log(email in config.accounts);
     
     if (!(email in config.accounts)) {
         sendFailureResponse();
