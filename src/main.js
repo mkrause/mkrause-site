@@ -87,7 +87,7 @@ app.post('/api/authenticate', function(req, res) {
         res.send("Authentication failed", 401);
     };
     
-    if (!(email in config.accounts)) {
+    if (!config.accounts.hasOwnProperty("email")) {
         sendFailureResponse();
         return;
     }
