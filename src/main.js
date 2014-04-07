@@ -83,12 +83,13 @@ app.post('/api/authenticate', function(req, res) {
     var email = req.body.email;
     var password = req.body.password;
     
-    var sendFailureResponse = function() {
+    var sendFailureResponse = function(reason) {
+        console.error(reason);
         res.send("Authentication failed", 401);
     };
     
-    if (!config.accounts.hasOwnProperty("email")) {
-        sendFailureResponse();
+    if (!config.accounts.hasOwnProperty(email)) {
+        sendFailureResponse("Account does not exist");
         return;
     }
     
