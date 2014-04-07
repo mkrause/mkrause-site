@@ -84,7 +84,6 @@ app.post('/api/authenticate', function(req, res) {
     var password = req.body.password;
     
     var sendFailureResponse = function(reason) {
-        console.error(reason);
         res.send("Authentication failed", 401);
     };
     
