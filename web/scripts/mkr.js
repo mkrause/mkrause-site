@@ -99,8 +99,13 @@ define([
             })
             .controller('mkr.errors.pageNotFound', function() {})
             .run(function($rootScope, $state) {
+                // Globally accessible layout state
                 $rootScope.layout = {
-                    update: function(key, value) { this[key] = value; }
+                    // Set a value
+                    update: function(key, value) { this[key] = value; },
+                    makeTitle: function(prefix) {
+                        return this.title ? this.title + ' - ' + prefix : prefix;
+                    }
                 };
             });
     }

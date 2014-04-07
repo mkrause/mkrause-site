@@ -1,4 +1,6 @@
 
+{{ layout.update('title', post.title) }}
+
 <h2>{{post.title}}</h2>
 <p class="subtitle"><i class="fa fa-clock-o"></i> {{post.date}}</p>
 <div ng-bind-html="post.body"></div>

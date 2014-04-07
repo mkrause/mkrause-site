@@ -1,3 +1,6 @@
+
+{{ layout.update('title', 'Posts') }}
+
 <div class="post" ng-repeat="post in posts track by post.id" ng-class="{last: $last}">
     <h2>
         <a ui-sref="mkr.site.posts.post_with_slug({id: post.id, slug: post.slug})">

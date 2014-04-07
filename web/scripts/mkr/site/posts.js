@@ -25,6 +25,18 @@ define([
                             ]
                         }
                     })
+                    .state('mkr.site.posts.archive', {
+                        url: "/archive",
+                        controller: "mkr.site.posts.archive",
+                        templateUrl: "templates/mkr/archive.html",
+                        resolve: {
+                            posts: ['Restangular',
+                                function(Restangular) {
+                                    return Restangular.all('posts').getList();
+                                }
+                            ]
+                        }
+                    })
                     .state('mkr.site.posts.view', {
                         url: "/posts/{id}",
                         controller: "mkr.site.posts.view",
@@ -58,6 +70,17 @@ define([
                         title: post.title,
                         date: post.date,
                         body: $sce.trustAsHtml(post.body),
+                        slug: post.slug
+                    };
+                });
+            })
+            .controller('mkr.site.posts.archive', function($scope, posts) {
+                $scope.posts = posts.map(function(post, index) {
+                    var id = index + 1;
+                    return {
+                        id: post.id,
+                        title: post.title,
+                        date: post.date,
                         slug: post.slug
                     };
                 });

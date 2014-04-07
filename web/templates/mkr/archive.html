@@ -1,0 +1,20 @@
+
+{{ layout.update('title', 'Archive') }}
+
+<h2>Archive</h2>
+
+<form role="search">
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search archive...">
+    </div>
+</form>
+
+
+<div class="archive-entry" ng-repeat="post in posts track by post.id">
+    <span class="date">{{post.date}}</span>
+    <span>
+        <a ui-sref="mkr.site.posts.post_with_slug({id: post.id, slug: post.slug})">
+            {{post.title}}
+        </a>
+    </span>
+</div>
