@@ -71,7 +71,7 @@ define([
                     password: null
                 };
                 
-                $scope.submit = function() {
+                $scope.submit = function($event) {
                     // XXX due to a bug where some browsers don't fire an event upon autofilling
                     // an input (e.g. the "remember this password" feature), two-way data binding
                     // may fail. Quick hack to get around this, for now.
@@ -90,6 +90,7 @@ define([
                         });
                     
                     // Prevent form submission
+                    $event.preventDefault();
                     return false;
                 };
             })

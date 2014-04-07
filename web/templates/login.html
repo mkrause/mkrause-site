@@ -3,7 +3,7 @@
     {{ message }}
 </div>
 
-<form name="login" role="form" ng-submit="submit()">
+<form name="login" role="form" ng-submit="submit($event)" autocomplete="off">
     <div class="form-group">
         <label for="credentials-email">Email address</label>
         <input type="email" class="form-control" id="credentials-email" placeholder="Enter email" ng-model="credentials.email">
