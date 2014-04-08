@@ -11,8 +11,10 @@
     <link rel="alternate" type="application/atom+xml" title="Posts" href="/feed.xml">
     
 <% if (env === "production") { %>
+    <!--[if !IE]> --> <!-- This conditional comment works for IE up to (and including) IE 9 -->
     <link rel="stylesheet" href="build/app.css">
     <script src="build/app.js" async></script>
+    <!-- <![endif]-->
 <% } else { %>
     <link rel="stylesheet/less" href="style/main.less">
     <script>
@@ -25,6 +27,12 @@
 <% } %>
 </head>
 <body>
+    
+    <!--[if lte IE 9]>
+    <div style="padding: 30px; text-align: center; font-size: 14px">
+        Sorry, this site currently does not work for IE versions older than IE 10. :(
+    </div>
+    <![endif]-->
     
     <div id="global-error" class="alert alert-danger" style="display: none; margin: 50px">
         <strong>Well, damn. Something seems to have gone wrong, sorry about that. Maybe you're
