@@ -6,6 +6,7 @@ var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var yaml = require('js-yaml');
 var marked = require('marked');
+var Feed = require('feed');
 var jwt = Promise.promisifyAll(require('jsonwebtoken'));
 var passLib = Promise.promisifyAll(require('./pass'));
 
@@ -79,6 +80,29 @@ function parsePost(fileName, fileBuffer) {
     return post;
 }
 
+// Return a promise for a list of post objects
+function getPostList() {
+    return fs.readdirAsync(config.postsDir)
+        // Filter out anything that doesn't look like a post
+        .filter(function(fileName) {
+            return /\.md$/.test(fileName);
+        })
+        // For each file, read the contents and parse it to a JSON representation
+        .map(function(fileName) {
+            var filePath = path.join(config.postsDir, fileName);
+            var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
+            
+            // Read the file and parse it
+            return fs.readFileAsync(filePath).then(parseFn);
+        })
+        // Remove any posts not marked as published
+        .filter(_.matches({ published: true }))
+        // Sort in reverse chronological order
+        .call('sort', function(post1, post2) {
+            return Date.parse(post2.date) - Date.parse(post1.date);
+        });
+}
+
 app.post('/api/authenticate', function(req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -111,25 +135,7 @@ app.post('/api/authenticate', function(req, res) {
 });
 
 app.get('/api/posts', function(req, res) {
-    fs.readdirAsync(config.postsDir)
-        // Filter out anything that doesn't look like a post
-        .filter(function(fileName) {
-            return /\.md$/.test(fileName);
-        })
-        // For each file, read the contents and parse it to a JSON representation
-        .map(function(fileName) {
-            var filePath = path.join(config.postsDir, fileName);
-            var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
-            
-            // Read the file and parse it
-            return fs.readFileAsync(filePath).then(parseFn);
-        })
-        // Remove any posts not marked as published
-        .filter(_.matches({ published: true }))
-        // Sort in reverse chronological order
-        .call('sort', function(post1, post2) {
-            return Date.parse(post2.date) - Date.parse(post1.date);
-        })
+    getPostList()
         // Send response
         .then(res.json.bind(res))
         // Error handling
@@ -176,6 +182,43 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
                 console.error(reason, reason.stack);
                 res.send("Server error", 500);
             }
+        });
+});
+
+app.get('/feed.xml', function(req, res) {
+    var feed = new Feed({
+        title: 'mkrause - Posts',
+        feed_url: 'http://mkrause.nl/feed.xml',
+        site_url: 'http://mkrause.nl',
+        author: 'Maikel Krause'
+    });
+    
+    var feed = new Feed({
+        title: 'mkrause - Posts',
+        link: 'http://mkrause.nl',
+        author: {
+            name: 'Maikel Krause',
+            email: 'maikelkrause@gmail.com',
+            link: 'https://mkrause.nl'
+        }
+    });
+    
+    getPostList()
+        .then(function(postList) {
+            postList.forEach(function(post) {
+                feed.addItem({
+                    title: post.title,
+                    link: 'http://mkrause.nl/posts/' + post.id + '/' + post.slug,
+                    description: post.body,
+                    date: new Date(post.date)
+                });
+            });
+            
+            res.send(feed.render('atom-1.0'));
+        })
+        .catch(function(reason) {
+            console.error(reason);
+            res.send("Server error");
         });
 });
 

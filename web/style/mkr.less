@@ -140,35 +140,39 @@
         
         .post {
             border-bottom: 1px solid white;
+            
+            p {
+                font-size: 17px;
+            }
+            
+            img {
+                max-width: 100%;
+            }
+            
+            code, pre {
+                font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+                font-size: 14px;
+                margin-bottom: 30px;
+            }
+            
+            pre {
+                padding: 15px 25px;
+                background: rgba(0, 0, 0, 0.5);
+                border: none;
+                border-radius: 0;
+                color: white;
+            }
+            
+            p code {
+                background: rgba(0, 0, 0, 0.2);
+                border: none;
+                border-radius: 0;
+                color: white;
+            }
         }
         
         .post.last {
             border-bottom: none;
-        }
-        
-        p {
-            font-size: 17px;
-        }
-        
-        code, pre {
-            font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-        
-        pre {
-            padding: 15px 25px;
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            border-radius: 0;
-            color: white;
-        }
-        
-        p code {
-            background: rgba(0, 0, 0, 0.2);
-            border: none;
-            border-radius: 0;
-            color: white;
         }
     }
 }
