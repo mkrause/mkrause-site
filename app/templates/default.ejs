@@ -26,12 +26,26 @@
 </head>
 <body>
     
-    <!--
-    Kind of empty right? All content is generated through AngularJS, and everything's been compressed and minified.
-    Check out the source code on: https://github.com/mkrause/mkrause-site
-    -->
+    <div ui-view>
+        <!--
+        Kind of empty right? All content is generated through AngularJS, and all the code's
+        been compressed and minified.
+        
+        Check out the source code on: https://github.com/mkrause/mkrause-site
+        -->
+        
+        <div id="global-error" class="alert alert-danger" style="display: none; margin: 50px">
+            Well, damn. Something seems to have gone wrong. This site's been tested on the latest
+            versions of Chrome, Firefox, and Safari. Sorry about that.
+        </div>
+    </div>
     
-    <div ui-view></div>
+    <script>
+    window.onerror = function(message, url, lineNumber) {
+        document.getElementById('global-error').style.display = 'block';
+        return true;
+    };
+    </script>
     
 <% if (env === "development") { %>
     <script src="vendor/requirejs/require.js"></script>
