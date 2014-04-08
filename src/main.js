@@ -49,7 +49,7 @@ app.use(function(req, res, next){
         req.headers['user-agent']
     );
     
-    fs.appendFile('/tmp/log.txt', log);
+    fs.appendFile('/root/mkrause_site/logs/server.log', log);
     
     next();
 });
@@ -57,6 +57,20 @@ app.use(function(req, res, next){
 app.use(app.router);
 
 // Routes
+
+app.post('/api/client_error', function(req, res) {
+    var log = util.format(
+        "[%s] Error: \"%s\" in %s on line %s (user agent: %s)\n",
+        (new Date()).toISOString(),
+        req.body.message,
+        req.body.url,
+        req.body.line,
+        req.body.user_agent
+    );
+    fs.appendFile('/root/mkrause_site/logs/client_errors.log', log);
+    
+    res.send("");
+});
 
 // Parse a post definition file
 function parsePost(fileName, fileBuffer) {
