@@ -1,3 +1,4 @@
+var util = require('util');
 var http = require('http');
 var path = require('path');
 var express = require('express');
@@ -36,6 +37,22 @@ express.static.mime.define({
     'text/css': ['less']
 });
 app.use(express.static(path.join(__dirname, '../web')));
+
+// Basic logger
+app.use(function(req, res, next){
+    var log = util.format(
+        "[%s] %s %s %s (%s)\n",
+        (new Date()).toISOString(),
+        req.connection.remoteAddress,
+        req.method,
+        req.url,
+        req.headers['user-agent']
+    );
+    
+    fs.appendFile('/tmp/log.txt', log);
+    
+    next();
+});
 
 app.use(app.router);
 
