@@ -35,17 +35,20 @@
     window.onerror = function(message, url, lineNumber) {
         document.getElementById('global-error').style.display = 'block';
         
-        // Log this error
-        var xhr = new XMLHttpRequest();
-        var params = 'message=' + encodeURIComponent(message)
-            + '&url=' + encodeURIComponent(url)
-            + '&line=' + encodeURIComponent(lineNumber)
-            + '&user_agent=' + encodeURIComponent(navigator.userAgent);
-        xhr.open('POST', '/api/client_error', true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send(params);
+        if (window.XMLHttpRequest) {
+            // Log this error
+            var xhr = new XMLHttpRequest();
+            var params = 'message=' + encodeURIComponent(message)
+                + '&url=' + encodeURIComponent(url)
+                + '&line=' + encodeURIComponent(lineNumber)
+                + '&user_agent=' + encodeURIComponent(navigator.userAgent);
+            xhr.open('POST', '/api/client_error', true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(params);
+        }
         
-        return true;
+        // Trigger the built-in error handler
+        return false;
     };
     </script>
     
