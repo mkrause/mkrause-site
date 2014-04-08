@@ -49,7 +49,7 @@ app.use(function(req, res, next){
         req.headers['user-agent']
     );
     
-    fs.appendFile('/root/mkrause_site/logs/server.log', log);
+    fs.appendFile(path.join(config.logDir, 'server.log'), log);
     
     next();
 });
@@ -58,6 +58,7 @@ app.use(app.router);
 
 // Routes
 
+// Place for the client to send errors (for logging)
 app.post('/api/client_error', function(req, res) {
     var log = util.format(
         "[%s] Error: \"%s\" in %s on line %s (user agent: %s)\n",
@@ -67,7 +68,7 @@ app.post('/api/client_error', function(req, res) {
         req.body.line,
         req.body.user_agent
     );
-    fs.appendFile('/root/mkrause_site/logs/client_errors.log', log);
+    fs.appendFile(path.join(config.logDir, 'client_errors.log'), log);
     
     res.send("");
 });
