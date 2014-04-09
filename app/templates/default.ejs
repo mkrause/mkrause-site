@@ -30,7 +30,7 @@
     
     <noscript>
         <div style="padding: 30px; padding-top: 100px; text-align: center; font-size: 18px">
-            JavaScript must be enabled in order for this site to work.
+            Please enable JavaScript to view this site.
         </div>
     </noscript>
     
@@ -40,14 +40,21 @@
     </div>
     <![endif]-->
     
-    <div id="global-error" class="alert alert-danger" style="display: none; margin: 50px">
-        <strong>Well, damn. Something seems to have gone wrong, sorry about that. Maybe you're
-        running an older version of your browser? This site should work on the latest versions
-        of most major browsers.</strong>
+    <div id="wrapper" ui-view>
+        <!--
+        Kind of empty right? All content is generated through AngularJS, and all the code's
+        been compressed and minified.
+        
+        Check out the source code on: https://github.com/mkrause/mkrause-site
+        -->
     </div>
+    
     <script>
     window.onerror = function(message, url, lineNumber) {
-        document.getElementById('global-error').style.display = 'block';
+        var message = "Well, damn. Something seems to have gone wrong, sorry about"
+            + " that. Maybe you're running an older version of your browser? This site should"
+            + " work on the latest versions of most major browsers.";
+        document.getElementById('wrapper').innerHTML = message;
         
         if (window.XMLHttpRequest) {
             // Log this error
@@ -65,15 +72,6 @@
         return false;
     };
     </script>
-    
-    <div ui-view>
-        <!--
-        Kind of empty right? All content is generated through AngularJS, and all the code's
-        been compressed and minified.
-        
-        Check out the source code on: https://github.com/mkrause/mkrause-site
-        -->
-    </div>
     
 <% if (env === "development") { %>
     <script src="vendor/requirejs/require.js"></script>
