@@ -220,17 +220,9 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
 app.get('/feed.xml', function(req, res) {
     var feed = new Feed({
         title: 'mkrause - Posts',
-        feed_url: 'http://mkrause.nl/feed.xml',
-        site_url: 'http://mkrause.nl',
-        author: 'Maikel Krause'
-    });
-    
-    var feed = new Feed({
-        title: 'mkrause - Posts',
         link: 'http://mkrause.nl',
         author: {
             name: 'Maikel Krause',
-            email: 'maikelkrause@gmail.com',
             link: 'https://mkrause.nl'
         }
     });
