@@ -3,23 +3,23 @@
 .DS_Store
 
 # Tool support
-.vagrant
-npm-debug.log
+/.vagrant
+/npm-debug.log
 
 # Locally installed dependencies
-node_modules
-web/vendor
+/node_modules
+/web/vendor
 
 # Local config
-app/workflow/params.sh
-app/config/params.js
+/app/workflow/params.sh
+/app/config/params.js
 
 # Build files
-web/build
+/web/build
 
 # Temporary files
-app/tmp
+/app/tmp
 
 # Generated (or otherwise locally managed) content
-app/posts
-web/content
+/app/posts
+/web/content
