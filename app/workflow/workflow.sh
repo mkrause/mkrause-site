@@ -218,6 +218,20 @@ cmd_run() {
     npm start
 }
 
+cmd_remote() {
+    #TODO
+    
+    # remote init
+    # => get any new (or existing) server ready to run this app
+    # - claim port 80
+    # - install cron jobs
+    
+    # remote --env=prod
+    # workflow/servers/prod.sh
+    
+    return
+}
+
 cmd_deploy() {
     local host="$config_remote_host"
     local username="$config_remote_username"
