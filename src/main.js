@@ -33,6 +33,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride()); // Allow HTTP method override using a `_method` param
 
+// In development, set up a URL to point to the test suite
+if (config.env === 'development') {
+    app.use("/tests", express.static(path.join(__dirname, '../tests')));
+}
+
 express.static.mime.define({
     'text/css': ['less']
 });

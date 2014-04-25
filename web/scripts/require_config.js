@@ -10,6 +10,7 @@ require.config({
         'angular': '../vendor/angular/angular',
         'angular-route': '../vendor/angular-route/angular-route',
         'angular-animate': '../vendor/angular-animate/angular-animate',
+        'angular-mocks': '../vendor/angular-mocks/angular-mocks',
         'restangular': '../vendor/restangular/dist/restangular.min',
         'angular-ui-router': '../vendor/angular-ui-router/release/angular-ui-router.min',
         'markdown': '../vendor/markdown/src/markdown'
@@ -21,6 +22,7 @@ require.config({
         'angular': { exports: 'angular' },
         'angular-route': { deps: ['angular'] },
         'angular-animate': { deps: ['angular'] },
+        'angular-mocks': { deps: ['angular'] },
         'restangular': { deps: ['angular', 'underscore'] },
         'angular-ui-router': { deps: ['angular'] }
     }

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Jasmine Spec Runner</title>
+    <link rel="stylesheet" href="../vendor/jasmine/lib/jasmine-core/jasmine.css">
+</head>
+<body>
+    <script src="../vendor/jasmine/lib/jasmine-core/jasmine.js"></script>
+    <script src="../vendor/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+    
+    <script src="../vendor/requirejs/require.js"></script>
+    <script src="../scripts/require_config.js"></script>
+    <script>
+    "use strict"
+    
+    require(['mkr', 'angular-mocks', '../vendor/jasmine/lib/jasmine-core/boot'], function() {
+        describe('posts module', function() {
+            beforeEach(module('mkr.site.posts'));
+            
+            it('should return an empty array when there are no posts',
+                inject(function($controller, $rootScope, $state, $location) {
+                var scope = $rootScope.$new();
+                $controller('mkr.site.posts.list', {
+                    '$scope': scope,
+                    'posts': []
+                });
+                
+                expect(scope.posts).toEqual([]);
+            }));
+        });
+        
+        // Stupid hack, since we're using RequireJS we can't load our specs until after onload, but Jasmine's
+        // boot uses onload to initialize
+        window.onload();
+    });
+    </script>
+</body>
+</html>
