@@ -16,7 +16,22 @@ module.exports.pageReady = function(driver, path) {
                 });
         };
         
+        var url = baseUrl + path;
+        
         driver.get(baseUrl + path)
             .then(waitUntilReady, reject);
+        
+        /*
+        driver.getCurrentUrl()
+            .then(function(currentUrl) {
+                // Simple resolve if we're already on the page
+                if (currentUrl === url) {
+                    resolve();
+                } else {
+                    driver.get(baseUrl + path)
+                        .then(waitUntilReady, reject);
+                }
+            });
+        */
     });
 };
