@@ -23,3 +23,5 @@
 # Generated (or otherwise locally managed) content
 /app/posts
 /web/content
+
+tests/selenium/server.jar

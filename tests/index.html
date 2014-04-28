@@ -14,6 +14,7 @@
     <script>
     require.config({
         paths: {
+            'tests': '../tests',
             'jasmine': '../vendor/jasmine/lib/jasmine-core/boot'
         },
         shim: {
@@ -21,7 +22,7 @@
         }
     });
     
-    require(['../tests/mkr/site/posts'], function() {
+    require(['tests/all'], function() {
         // Stupid hack, since we're using RequireJS we can't load our specs until after onload, but Jasmine's
         // boot uses onload to initialize
         window.onload();
