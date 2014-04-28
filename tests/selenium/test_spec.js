@@ -3,8 +3,7 @@
 
 var webdriver = require('selenium-webdriver');
 var SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
-
-console.log(__dirname + "/server.jar");
+var util = require('./util.js');
 
 var server = new SeleniumServer(__dirname + "/server.jar", {
   port: 4444
@@ -31,37 +30,23 @@ var By = webdriver.By;
 
 describe('stub', function() {
     it('should ...', function() {
-        this.title = null;
-        this.done = false;
+        var title = null;
+        var done = false;
         
-        var getTestData = function() {
-            driver.getTitle().then(function(title) {
-                this.title = title;
-                this.done = true;
+        util.pageReady(driver, '/')
+            .then(function() {
+                return driver.getTitle()
+            })
+            .then(function(resultTitle) {
+                title = resultTitle;
+                done = true;
                 driver.quit();
-            }.bind(this));
-        }.bind(this);
+            });
         
-        driver.get('http://mkrause-site.local:8000').then(function() {
-            var waitUntilReady = function() {
-                driver.executeScript("return document.title != 'mkrause'").then(function(isReady) {
-                    if (isReady) {
-                        getTestData();
-                    } else {
-                        setTimeout(waitUntilReady, 200);
-                    }
-                });
-            };
-            
-            waitUntilReady();
-        });
-        
-        waitsFor(function() {
-            return this.done;
-        }, "completion", 10000);
+        waitsFor(function() { return done; }, "completion", 10000);
         
         runs(function() {
-            expect(this.title).toBe("Posts - mkrause");
+            expect(title).toBe("Posts - mkrause");
         });
     });
 });
