@@ -25,32 +25,42 @@ var By = webdriver.By;
 // http://webdriver.io
 // https://www.browserstack.com/automate/node
 
+// driver.getPageSource().then(console.log);
+// driver.findElement(By.id('wrapper')).getText().then(console.log);
+// driver.findElement(By.tagName('body')).getAttribute('innerHTML').then(console.log);
 
 describe('stub', function() {
     it('should ...', function() {
         this.title = null;
         this.done = false;
         
-        var that = this;
-        driver.get('http://mkrause-site.local:8000').then(function() {
-            setTimeout(function() {
-                // driver.getPageSource().then(console.log);
-                // driver.findElement(By.id('wrapper')).getText().then(console.log);
-                // driver.findElement(By.tagName('body')).getAttribute('innerHTML').then(console.log);
-                // driver.executeScript("return 2 + 2").then(console.log);
-                driver.getTitle().then(function(title) {
-                    that.title = title;
-                    that.done = true;
-                });
+        var getTestData = function() {
+            driver.getTitle().then(function(title) {
+                this.title = title;
+                this.done = true;
                 driver.quit();
-            }, 2000);
+            }.bind(this));
+        }.bind(this);
+        
+        driver.get('http://mkrause-site.local:8000').then(function() {
+            var waitUntilReady = function() {
+                driver.executeScript("return document.title != 'mkrause'").then(function(isReady) {
+                    if (isReady) {
+                        getTestData();
+                    } else {
+                        setTimeout(waitUntilReady, 200);
+                    }
+                });
+            };
+            
+            waitUntilReady();
         });
         
         waitsFor(function() {
             return this.done;
         }, "completion", 10000);
-
-        runs(function () {
+        
+        runs(function() {
             expect(this.title).toBe("Posts - mkrause");
         });
     });
