@@ -34,6 +34,9 @@ define([
                 var authUser = auth.getAuthUser();
                 $scope.authUser = authUser;
             })
-            .controller('mkr.admin.index', function($scope) {});
+            .controller('mkr.admin.index', function($scope) {})
+            .directive('datatable', function() {
+                return {};
+            });
     }
 );
