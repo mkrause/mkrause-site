@@ -59,6 +59,21 @@ app.use(function(req, res, next){
     next();
 });
 
+/*
+// SEO
+app.use(function(req, res, next) {
+    if (req.query.hasOwnProperty('_escaped_fragment_')) {
+        http.get("http://localhost:8999", function(response) {
+            response.on('data', function(chunk) {
+                res.send(chunk.toString());
+            });
+        });
+    } else {
+        next();
+    }
+});
+*/
+
 app.use(app.router);
 
 // Routes

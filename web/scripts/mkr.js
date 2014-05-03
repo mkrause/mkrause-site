@@ -99,7 +99,7 @@ define([
                 $state.transitionTo('mkr.site.posts.list');
             })
             .controller('mkr.errors.pageNotFound', function() {})
-            .run(function($rootScope, $state) {
+            .run(function($rootScope, $state, $window) {
                 // Globally accessible layout state
                 $rootScope.layout = {
                     // Set a value
@@ -108,6 +108,23 @@ define([
                         return this.title ? this.title + ' - ' + prefix : prefix;
                     }
                 };
+                
+                $rootScope.$on('$stateChangeSuccess', function(evt, toState, toParams, fromState, fromParams) {
+                    if ($window.__ready) {
+                        return;
+                    }
+                    
+                    // https://github.com/steeve/angular-seo
+                    $rootScope.$evalAsync(function() { // Fire after $digest
+                        setTimeout(function() { // Fire after DOM rendering
+                            if (typeof $window.callPhantom == 'function') {
+                                $window.callPhantom();
+                            }
+                            
+                            $window.__ready = true;
+                        }, 0);
+                    });
+                });
             });
     }
 );
