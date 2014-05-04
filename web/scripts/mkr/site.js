@@ -1,10 +1,11 @@
 define([
+        'util/util',
         'angular',
         'angular-ui-router',
         'restangular',
         'mkr/site/posts'
     ],
-    function(angular, uiRouter, restangular) {
+    function(util, angular, uiRouter, restangular) {
         return angular.module('mkr.site', [
                 'ui.router',
                 'restangular',
@@ -12,21 +13,20 @@ define([
             ])
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
-                    // Defines the layout for all `mkr.site.X` states
-                    .state('mkr.site', {
+                    // Layout
+                    .state('mkr:site', {
+                        abstract: true,
+                        parent: 'mkr',
                         templateUrl: "templates/mkr.html"
                     })
-                    .state('mkr.site.index', {
-                        controller: "mkr.site.index"
+                    .state('mkr:site:index', {
+                        onEnter: util.forwardToState('mkr:site:posts:list')
                     })
-                    .state('mkr.site.about', {
+                    .state('mkr:site:about', {
+                        parent: 'mkr:site',
                         url: "/about",
                         templateUrl: "templates/mkr/about.html"
                     });
-            })
-            .controller('mkr.site.index', function($state) {
-                // Change to the given state without altering the URL
-                $state.transitionTo('mkr.site.posts.list', null, { location: false });
             });
     }
 );

@@ -1,4 +1,5 @@
 define([
+        'util/util',
         'underscore',
         'angular',
         // Angular modules
@@ -6,7 +7,7 @@ define([
         'restangular',
         'util/auth'
     ],
-    function(_, angular) {
+    function(util, _, angular) {
         return angular.module('mkr.admin', [
                 'ui.router',
                 'restangular',
@@ -14,20 +15,22 @@ define([
             ])
             .config(function($stateProvider, $urlRouterProvider) {
                 $stateProvider
-                    // Defines the layout for all `mkr.admin.X` states
-                    .state('mkr.admin', {
-                        templateUrl: "templates/mkr.html",
-                        controller: "mkr.admin"
+                    .state('mkr:admin', {
+                        abstract: true,
+                        parent: 'mkr:site',
+                        templateUrl: "templates/mkr/admin.html",
+                        controller: 'mkr.admin'
                     })
-                    .state('mkr.admin.index', {
-                        url: "/admin",
-                        controller: "mkr.admin.index",
+                    .state('mkr:admin:index', {
+                        parent: 'mkr:admin',
+                        url: '/admin',
+                        controller: 'mkr.admin.index',
                         templateUrl: "templates/mkr/admin/index.html"
                     });
             })
             .controller('mkr.admin', function($scope, $state, auth) {
                 if (!auth.hasAuthUser()) {
-                    $state.transitionTo('mkr.site.login', null, { location: false });
+                    $state.transitionTo('mkr:login', null, { location: false });
                     return;
                 }
                 

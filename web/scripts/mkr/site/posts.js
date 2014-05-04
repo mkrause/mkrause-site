@@ -1,22 +1,21 @@
 define([
+        'util/util',
         'angular',
         'angular-ui-router',
         'restangular'
     ],
-    function(angular, uiRouter, restangular) {
+    function(util, angular, uiRouter, restangular) {
         return angular.module('mkr.site.posts', [
                 'ui.router',
                 'restangular'
             ])
             .config(function($stateProvider) {
                 $stateProvider
-                    .state('mkr.site.posts', {
-                        template: "<div ui-view></div>"
-                    })
-                    .state('mkr.site.posts.list', {
+                    .state('mkr:site:posts:list', {
+                        parent: 'mkr:site',
                         url: "/posts",
-                        controller: "mkr.site.posts.list",
                         templateUrl: "templates/mkr/posts.html",
+                        controller: "mkr.site.posts.list",
                         resolve: {
                             posts: ['Restangular',
                                 function(Restangular) {
@@ -25,10 +24,11 @@ define([
                             ]
                         }
                     })
-                    .state('mkr.site.posts.archive', {
+                    .state('mkr:site:posts:archive', {
+                        parent: 'mkr:site',
                         url: "/archive",
-                        controller: "mkr.site.posts.archive",
                         templateUrl: "templates/mkr/archive.html",
+                        controller: "mkr.site.posts.archive",
                         resolve: {
                             posts: ['Restangular',
                                 function(Restangular) {
@@ -37,10 +37,11 @@ define([
                             ]
                         }
                     })
-                    .state('mkr.site.posts.view', {
+                    .state('mkr:site:posts:view', {
+                        parent: 'mkr:site',
                         url: "/posts/{id}",
-                        controller: "mkr.site.posts.view",
                         templateUrl: "templates/mkr/post_view.html",
+                        controller: "mkr.site.posts.view",
                         resolve: {
                             post: ['Restangular', '$stateParams',
                                 function(Restangular, $stateParams) {
@@ -49,10 +50,11 @@ define([
                             ]
                         }
                     })
-                    .state('mkr.site.posts.post_with_slug', {
+                    .state('mkr:site:posts:post_with_slug', {
+                        parent: 'mkr:site',
                         url: "/posts/{id}/{slug}",
-                        controller: "mkr.site.posts.view",
                         templateUrl: "templates/mkr/post_view.html",
+                        controller: "mkr.site.posts.view",
                         resolve: {
                             post: ['Restangular', '$stateParams',
                                 function(Restangular, $stateParams) {

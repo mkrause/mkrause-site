@@ -1,6 +1,7 @@
 // Module definition: `mkr`
 // Top-level module that integrates all the different features of the application.
 define([
+        'util/util',
         'angular',
         // Angular modules
         'angular-animate',
@@ -10,7 +11,7 @@ define([
         'mkr/site',
         'mkr/admin'
     ],
-    function(angular) {
+    function(util, angular) {
         return angular.module('mkr', [
                 //'ngAnimate',
                 'ui.router',
@@ -22,46 +23,46 @@ define([
             .config(function(RestangularProvider) {
                 RestangularProvider.setBaseUrl('/api');
             })
-            .config(function($stateProvider, $urlRouterProvider) {
-                $stateProvider
-                    // Empty state, needs to be defined in order to use `mkr.X`
-                    .state('mkr', {
-                        template: "<div ui-view></div>"
-                    })
-                    .state('mkr.index', {
-                        url: "/",
-                        controller: "mkr.index"
-                    })
-                    .state('mkr.site.login', {
-                        url: "/login",
-                        controller: "mkr.login",
-                        templateUrl: "templates/login.html"
-                    })
-                    .state('mkr.logout', {
-                        url: "/logout",
-                        controller: "mkr.logout"
-                    })
-                    .state('mkr.errors', {
-                        templateUrl: "templates/mkr.html"
-                    })
-                    .state('mkr.errors.pageNotFound', {
-                        templateUrl: "templates/404.html",
-                        controller: 'mkr.errors.pageNotFound'
-                    });
-                
-                // Fallback: if no state matches, show page not found page (without altering
-                // the URL in the browser)
-                $urlRouterProvider.otherwise(function($injector, $location) {
-                    var $state = $injector.get('$state');
-                    $state.transitionTo('mkr.errors.pageNotFound', null, { location: false });
-                });
-            })
             .config(function($locationProvider) {
                 $locationProvider.html5Mode(true);
             })
-            .controller('mkr.index', function($state) {
-                // Change to the given state without altering the URL
-                $state.transitionTo('mkr.site.index', null, { location: false });
+            .config(function($stateProvider, $urlRouterProvider) {
+                $stateProvider
+                    // Layout
+                    .state('mkr', {
+                        abstract: true,
+                        template: "<ui-view></ui-view>"
+                    })
+                    .state('mkr:index', {
+                        url: '/',
+                        onEnter: util.forwardToState('mkr:site:index')
+                    })
+                    .state('mkr:login', {
+                        parent: 'mkr:site',
+                        url: '/login',
+                        templateUrl: 'templates/login.html',
+                        controller: 'mkr.login'
+                    })
+                    .state('mkr:logout', {
+                        parent: 'mkr:site',
+                        url: '/logout',
+                        controller: 'mkr.logout'
+                    })
+                    .state('mkr:errors:pageNotFound', {
+                        parent: 'mkr:site',
+                        templateUrl: 'templates/404.html'
+                    });
+                
+                $urlRouterProvider.otherwise(function($injector, $location) {
+                    var $state = $injector.get('$state');
+                    
+                    if ($location.path() === '/') {
+                        $state.transitionTo('mkr:site:posts:list', null, { location: false });
+                    } else {
+                        // Fallback: if no state matches, show "page not found" page
+                        $state.transitionTo('mkr:errors:pageNotFound', null, { location: false });
+                    }
+                });
             })
             .controller('mkr.login', function($scope, $state, auth) {
                 $scope.message = "";
@@ -83,7 +84,7 @@ define([
                     
                     auth.authenticate($scope.credentials)
                         .then(function(user) {
-                            $state.transitionTo('mkr.admin.index');
+                            $state.transitionTo('mkr:admin:index');
                         })
                         .catch(function(reason) {
                             $scope.message = "Login failed";
@@ -96,9 +97,8 @@ define([
             })
             .controller('mkr.logout', function($state, auth) {
                 auth.deauthorize();
-                $state.transitionTo('mkr.site.posts.list');
+                $state.go('mkr:site:posts:list');
             })
-            .controller('mkr.errors.pageNotFound', function() {})
             .run(function($rootScope, $state, $window) {
                 // Globally accessible layout state
                 $rootScope.layout = {
@@ -110,6 +110,8 @@ define([
                 };
                 
                 $rootScope.$on('$stateChangeSuccess', function(evt, toState, toParams, fromState, fromParams) {
+                    // console.log(arguments);
+                    
                     if ($window.__ready) {
                         return;
                     }
@@ -124,6 +126,10 @@ define([
                             $window.__ready = true;
                         }, 0);
                     });
+                });
+                
+                $rootScope.$on('$stateChangeError', function() {
+                    console.log('stateChangeError');
                 });
             });
     }
