@@ -29,9 +29,10 @@ configure   Configure the project.
 update      Update dependencies.
 outdated    Check for any outdated dependencies.
 status      Check the state of the project.
+logs        View or manage log files.
 build       Run build scripts.
 test        Run test scripts.
-run         Run the project.
+start       Start the project.
 deploy      Deploy the project.
 sync        Upload files to a remote server.
 watch       Watch for changes in the project directory, and synchronize automatically.
@@ -203,6 +204,25 @@ cmd_status() {
     git status
 }
 
+cmd_logs() {
+    local clear=0
+    
+    # Options parsing
+    for arg in "$@"; do
+        case "$arg" in
+            --) break ;; # Use "--" as a signal to stop options processing
+            --clear) clear=1 ;;
+        esac
+    done
+    
+    if [ "$clear" = 1 ]; then
+        rm app/logs/*.log
+    else
+        touch app/logs/out.log
+        tail -f app/logs/out.log
+    fi
+}
+
 cmd_build() {
     verify_installed grunt
     grunt
@@ -213,9 +233,14 @@ cmd_test() {
     return
 }
 
-cmd_run() {
-    verify_installed npm
-    npm start
+cmd_start() {
+    # verify_installed npm
+    # npm start
+    
+    forever --sourceDir "${root_dir}/src" --watch --watchDirectory "${root_dir}/src" \
+        --minUptime 1000 --spinSleepTime 5000 \
+        -o "${root_dir}/app/logs/out.log" -e "${root_dir}/app/logs/err.log" \
+        start main.js
 }
 
 cmd_remote() {
@@ -400,12 +425,14 @@ case "$cmd" in
         cmd_outdated "${args[@]}" "${options[@]}" ;;
     status)
         cmd_status "${args[@]}" "${options[@]}" ;;
+    logs)
+        cmd_logs "${args[@]}" "${options[@]}" ;;
     build)
         cmd_build "${args[@]}" "${options[@]}" ;;
     test)
         cmd_test "${args[@]}" "${options[@]}" ;;
-    run)
-        cmd_run "${args[@]}" "${options[@]}" ;;
+    start)
+        cmd_start "${args[@]}" "${options[@]}" ;;
     deploy)
         cmd_deploy "${args[@]}" "${options[@]}" ;;
     sync)

@@ -1,19 +1,16 @@
-var util = require('util');
+
+var _ = require('underscore');
+var nodeUtil = require('util');
 var http = require('http');
 var path = require('path');
 var express = require('express');
-var _ = require('underscore');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
-var yaml = require('js-yaml');
-var marked = require('marked');
 var Feed = require('feed');
 var jwt = Promise.promisifyAll(require('jsonwebtoken'));
 var passLib = Promise.promisifyAll(require('./pass'));
 
-marked.setOptions({
-    // sanitize: false
-});
+var PostsService = require('./services/posts.js');
 
 var config = require('../app/config/config.js');
 
@@ -45,7 +42,7 @@ app.use(express.static(path.join(__dirname, '../web')));
 
 // Basic logger
 app.use(function(req, res, next){
-    var log = util.format(
+    var log = nodeUtil.format(
         "[%s] %s %s %s (%s)\n",
         (new Date()).toISOString(),
         req.connection.remoteAddress,
@@ -76,11 +73,13 @@ app.use(function(req, res, next) {
 
 app.use(app.router);
 
+//
 // Routes
+//
 
 // Place for the client to send errors (for logging)
 app.post('/api/client_error', function(req, res) {
-    var log = util.format(
+    var log = nodeUtil.format(
         "[%s] Error: \"%s\" in %s on line %s (user agent: %s)\n",
         (new Date()).toISOString(),
         req.body.message,
@@ -92,68 +91,6 @@ app.post('/api/client_error', function(req, res) {
     
     res.send("");
 });
-
-// Parse a post definition file
-function parsePost(fileName, fileBuffer) {
-    var fileContents = fileBuffer.toString();
-    var properties = {};
-    var propertiesRegex = /---\n([\s\S]*)\n---\n/;
-    var propertiesMatches = fileContents.match(propertiesRegex);
-    if (propertiesMatches) {
-        var yamlText = propertiesMatches[1];
-        properties = yaml.load(yamlText);
-    }
-    
-    // Parse the file name for some extra properties
-    // Format: "[date]_[id]_[slug].md"
-    var fileNameProps = {};
-    var fileNameRegex = /^(\d{4})(\d{2})(\d{2})_([^_]+)_(.+)\./;
-    var fileNameMatches = fileName.match(fileNameRegex);
-    
-    fileNameProps.id = fileNameMatches[4];
-    fileNameProps.date = fileNameMatches[1]
-        + "-" + fileNameMatches[2]
-        + "-" + fileNameMatches[3];
-    fileNameProps.slug = fileNameMatches[5];
-    
-    var post = _.defaults(properties, fileNameProps, {
-        id: null,
-        title: null,
-        slug: null,
-        date: null,
-        published: false,
-        body: null
-    });
-    
-    // Parse the body of the file using a Markdown parser
-    var bodyMarkdown = fileContents.replace(propertiesRegex, '');
-    post.body = marked(bodyMarkdown);
-    
-    return post;
-}
-
-// Return a promise for a list of post objects
-function getPostList() {
-    return fs.readdirAsync(config.postsDir)
-        // Filter out anything that doesn't look like a post
-        .filter(function(fileName) {
-            return /\.md$/.test(fileName);
-        })
-        // For each file, read the contents and parse it to a JSON representation
-        .map(function(fileName) {
-            var filePath = path.join(config.postsDir, fileName);
-            var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
-            
-            // Read the file and parse it
-            return fs.readFileAsync(filePath).then(parseFn);
-        })
-        // Remove any posts not marked as published
-        .filter(_.matches({ published: true }))
-        // Sort in reverse chronological order
-        .call('sort', function(post1, post2) {
-            return Date.parse(post2.date) - Date.parse(post1.date);
-        });
-}
 
 app.post('/api/authenticate', function(req, res) {
     var email = req.body.email;
@@ -187,7 +124,9 @@ app.post('/api/authenticate', function(req, res) {
 });
 
 app.get('/api/posts', function(req, res) {
-    getPostList()
+    var postsSv = new PostsService();
+    
+    postsSv.getPostList()
         // Send response
         .then(res.json.bind(res))
         // Error handling
@@ -199,6 +138,7 @@ app.get('/api/posts', function(req, res) {
 
 app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
     var id = req.route.params.id;
+    var postsSv = new PostsService();
     
     fs.readdirAsync(config.postsDir)
         // Filter out anything that doesn't look like a post
@@ -221,7 +161,7 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
             var fileName = fileNamesWithId[0];
             
             var filePath = path.join(config.postsDir, fileName);
-            var parseFn = _.partial(parsePost, fileName); // Fill in the first argument
+            var parseFn = _.partial(postsSv.parsePost, fileName); // Fill in the first argument
             return fs.readFileAsync(filePath).then(parseFn);
         })
         // Send response
@@ -238,6 +178,8 @@ app.get(['/api/posts/:id', '/api/posts/:id/:slug'], function(req, res) {
 });
 
 app.get('/feed.xml', function(req, res) {
+    var postsSv = new PostsService();
+    
     var feed = new Feed({
         title: 'mkrause - Posts',
         link: 'http://mkrause.nl',
@@ -247,7 +189,7 @@ app.get('/feed.xml', function(req, res) {
         }
     });
     
-    getPostList()
+    postsSv.getPostList()
         .then(function(postList) {
             postList.forEach(function(post) {
                 feed.addItem({
@@ -274,5 +216,5 @@ app.get('*', function(req, res) {
 });
 
 http.createServer(app).listen(app.get('port'), function() {
-    console.log("Running on port " + app.get('port'));
+    console.log("Starting server (port: " + app.get('port') + ")");
 });

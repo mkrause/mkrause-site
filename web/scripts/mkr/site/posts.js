@@ -72,7 +72,8 @@ define([
                         title: post.title,
                         date: post.date,
                         body: $sce.trustAsHtml(post.body),
-                        slug: post.slug
+                        slug: post.slug,
+                        tags: post.tags
                     };
                 });
             })
@@ -83,7 +84,8 @@ define([
                         id: post.id,
                         title: post.title,
                         date: post.date,
-                        slug: post.slug
+                        slug: post.slug,
+                        tags: post.tags
                     };
                 });
             })
@@ -93,7 +95,8 @@ define([
                     title: post.title,
                     date: post.date,
                     body: $sce.trustAsHtml(post.body),
-                    slug: post.slug
+                    slug: post.slug,
+                    tags: post.tags
                 };
             });
     }

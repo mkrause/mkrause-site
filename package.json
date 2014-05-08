@@ -17,7 +17,8 @@
         "bcrypt": "~0.7.7",
         "jsonwebtoken": "~0.2.0",
         "ngmin": "~0.4",
-        "webdriverjs": "~1.6.1"
+        "webdriverjs": "~1.6.1",
+        "dateformat": "~1.0.7"
     },
     "devDependencies": {
         "grunt": "~0.4",

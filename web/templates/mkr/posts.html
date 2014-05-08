@@ -7,6 +7,12 @@
             {{post.title}}
         </a>
     </h2>
-    <p class="subtitle"><i class="fa fa-clock-o"></i> {{post.date}}</p>
+    <p class="subtitle">
+        <i class="fa fa-clock-o"></i> {{post.date}}
+        
+        <span ng-if="post.tags.length > 0">
+            &nbsp; <i class="fa fa-tag"></i> {{post.tags.join(', ')}}
+        </span>
+    </p>
     <div ng-bind-html="post.body"></div>
 </div>

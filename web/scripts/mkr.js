@@ -129,7 +129,7 @@ define([
                 });
                 
                 $rootScope.$on('$stateChangeError', function() {
-                    console.log('stateChangeError');
+                    console.log('stateChangeError', arguments);
                 });
             });
     }
