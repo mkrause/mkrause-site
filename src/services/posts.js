@@ -46,8 +46,9 @@ PostsService.prototype.parsePost = function(fileName, fileBuffer) {
     var post = _.defaults(properties, fileNameProps, {
         id: null,
         title: null,
-        slug: null,
         date: null,
+        link: null,
+        slug: null,
         tags: [],
         published: false,
         body: null,

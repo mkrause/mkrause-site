@@ -56,12 +56,8 @@ define([
                 $urlRouterProvider.otherwise(function($injector, $location) {
                     var $state = $injector.get('$state');
                     
-                    if ($location.path() === '/') {
-                        $state.transitionTo('mkr:site:posts:list', null, { location: false });
-                    } else {
-                        // Fallback: if no state matches, show "page not found" page
-                        $state.transitionTo('mkr:errors:pageNotFound', null, { location: false });
-                    }
+                    // Fallback: if no state matches, show "page not found" page
+                    $state.transitionTo('mkr:errors:pageNotFound', null, { location: false });
                 });
             })
             .controller('mkr.login', function($scope, $state, auth) {
@@ -112,20 +108,18 @@ define([
                 $rootScope.$on('$stateChangeSuccess', function(evt, toState, toParams, fromState, fromParams) {
                     // console.log(arguments);
                     
-                    if ($window.__ready) {
-                        return;
+                    if (!$window.__ready) {
+                        // https://github.com/steeve/angular-seo
+                        $rootScope.$evalAsync(function() { // Fire after $digest
+                            setTimeout(function() { // Fire after DOM rendering
+                                if (typeof $window.callPhantom == 'function') {
+                                    $window.callPhantom();
+                                }
+                                
+                                $window.__ready = true;
+                            }, 0);
+                        });
                     }
-                    
-                    // https://github.com/steeve/angular-seo
-                    $rootScope.$evalAsync(function() { // Fire after $digest
-                        setTimeout(function() { // Fire after DOM rendering
-                            if (typeof $window.callPhantom == 'function') {
-                                $window.callPhantom();
-                            }
-                            
-                            $window.__ready = true;
-                        }, 0);
-                    });
                 });
                 
                 $rootScope.$on('$stateChangeError', function() {

@@ -9,6 +9,7 @@ var fs = Promise.promisifyAll(require('fs'));
 var Feed = require('feed');
 var jwt = Promise.promisifyAll(require('jsonwebtoken'));
 var passLib = Promise.promisifyAll(require('./pass'));
+var dateFormat = require('dateformat');
 
 var PostsService = require('./services/posts.js');
 
@@ -38,6 +39,8 @@ if (config.env === 'development') {
 express.static.mime.define({
     'text/css': ['less']
 });
+//TODO: this seems to crash node in some circumstances, see:
+// http://stackoverflow.com/questions/13220565/unhandled-stream-error-in-pipe-from-node-js
 app.use(express.static(path.join(__dirname, '../web')));
 
 // Basic logger
@@ -125,7 +128,6 @@ app.post('/api/authenticate', function(req, res) {
 
 app.get('/api/posts', function(req, res) {
     var postsSv = new PostsService();
-    
     postsSv.getPostList()
         // Send response
         .then(res.json.bind(res))
@@ -216,5 +218,9 @@ app.get('*', function(req, res) {
 });
 
 http.createServer(app).listen(app.get('port'), function() {
-    console.log("Starting server (port: " + app.get('port') + ")");
+    console.log(nodeUtil.format(
+        "\n--- Restart (port: %d) [%s] ---",
+        app.get('port'),
+        (new Date()).toISOString()
+    ));
 });

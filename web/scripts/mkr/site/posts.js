@@ -71,6 +71,7 @@ define([
                         id: post.id,
                         title: post.title,
                         date: post.date,
+                        link: post.link,
                         body: $sce.trustAsHtml(post.body),
                         slug: post.slug,
                         tags: post.tags
@@ -84,6 +85,7 @@ define([
                         id: post.id,
                         title: post.title,
                         date: post.date,
+                        link: post.link,
                         slug: post.slug,
                         tags: post.tags
                     };
@@ -94,6 +96,7 @@ define([
                     id: post.id,
                     title: post.title,
                     date: post.date,
+                    link: post.link,
                     body: $sce.trustAsHtml(post.body),
                     slug: post.slug,
                     tags: post.tags

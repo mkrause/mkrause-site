@@ -2,9 +2,15 @@
 {{ layout.update('title', 'Posts') }}
 
 <div class="post" ng-repeat="post in posts track by post.id" ng-class="{last: $last}">
-    <h2>
+    <h2 class="post-article" ng-if="!post.link">
         <a ui-sref="mkr:site:posts:post_with_slug({id: post.id, slug: post.slug})">
             {{post.title}}
+        </a>
+    </h2>
+    <h2 class="post-link" ng-if="post.link">
+        <i class="fa fa-external-link"></i>
+        <a href="{{post.link}}">
+            "{{post.title}}"
         </a>
     </h2>
     <p class="subtitle">
