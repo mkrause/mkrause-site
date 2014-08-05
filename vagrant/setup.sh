@@ -51,7 +51,7 @@ apt-get install -q -y nodejs-legacy
 # NPM
 # http://stackoverflow.com/questions/20174399/cannot-install-npm-on-vagrant-during-provision
 if ! which npm; then
-    curl https://npmjs.org/install.sh | clean=no sh
+    curl https://www.npmjs.org/install.sh | clean=no sh
     npm install -g bower
     npm install -g grunt-cli
 fi
