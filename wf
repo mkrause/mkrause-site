@@ -1,5 +1,5 @@
 #!/bin/bash
-# Workflow automization tool
+# Workflow automatization tool
 
 # Get the absolute path for the directory containing the current script
 # Source: http://stackoverflow.com/questions/59895
